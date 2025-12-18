@@ -1044,160 +1044,172 @@ private:
 
 По аналогии с минимумом можно использовать любую ассоциативную операцию, будут небольшие различия в реализации (например, под такую реализацию можно легко подставить плюс в качестве ассоциативной операции, однако для минуса реализация будет немного отличаться)
 
-% \begin{definition}{Наименьшее общее кратное (НОК)}{}
-%   Всякое целое, кратное всем данным числам, называется их общим кратным. Наименьшее положительное общее кратное обозначается $[a, b, \ldots, l]$ или $\text{lcm}(a,b,\ldots,l)$.
-% \end{definition}
-% \begin{implementation}{Алгоритм поиска НОК}{}
-%   \begin{lstlisting}[language=c++]
-% int lcm(int a, int b) {
-%     return a * b / gcd(a, b);
-% }
-% \end{lstlisting}
-% \end{implementation}
+\clearpage
+\section{Сортировки. Теорема о нижней границе времени сортировки. Стабильные сортировки}
 
-% \textbf{Связь НОД и НОК:}
-% \[
-%   \gcd(a,b) \cdot \text{lcm}(a,b) = a \cdot b
-% \]
+\subsection{Сортировки}
 
+\textbf{Постановка задачи:}
 
-% \begin{theorem}{Эквивалентные условия сравнимости}{}
-%   Сравнимость чисел $a$ и $b$ по модулю $m$ эквивалентна:
-%   \begin{enumerate}
-%     \item Возможности представить $a$ как $a = b + mt$.
-%     \item Делимости $a - b$ на $m$.
-%   \end{enumerate}
-% \end{theorem}
+Имеется последовательность из $n$ элементов $x_1, \ldots, x_n$. Необходимо упорядочить элементы по неубыванию (невозрастанию), для удобства далее будем везде сортировать по неубыванию.
 
-% \textbf{Свойства сравнений:}
-% \begin{enumerate}
-%   \item Два числа, сравнимые с третьим, сравнимы между собою.
-%   \item Сравнения можно почленно складывать.
-%   \item Слагаемое, стоящее в какой-либо части сравнения, можно переносить в другую часть, переменив знак на обратный.
-%   \item Сравнения можно почленно перемножать.
-%   \item Обе части сравнения можно возвести в одну степень.
-%   \item К каждой части сравнения можно добавить число, кратное модулю.
-%   \item Обе части сравнения можно умножить на одно и то же целое.
-% \end{enumerate}
+Значит нужно найти перестановку элементов: $p_1, p_2, p_3, \ldots, p_n$, т. ч. $x_{p_1} \leq x_{p_2} \leq \ldots \leq x_{p_n}$.
 
-% \begin{definition}{Полная система вычетов}{}
-%   Набор из $m$ чисел, дающих все возможные остатки при делении на $m$. Обычно это $\{0, 1, 2, \ldots, m-1\}$.
-% \end{definition}
+\subsection{Теорема о нижней границе времени сортировки}
 
-% \begin{definition}{Приведённая система вычетов}{}
-%   Только те числа из полной системы, которые взаимно просты с $m$. Таких чисел $\varphi(m)$.
-% \end{definition}
+\begin{definition}{Сортировка, основанная на сравнениях}{}
+  Сортировку называют основанной на сравнениях, если она работает в следующем предположении: объекты можно только сравнивать.
+\end{definition}
 
-% \begin{theorem}{Теорема Эйлера}{}
-%   Если $\gcd(a, m) = 1$, то
-%   \[
-%     a^{\varphi(m)} \equiv 1 \pmod{m}
-%   \]
-% \end{theorem}
+\begin{theorem}{Нижняя оценка сортировки сравнениями}{}
+  Сортировка, основанная на сравнениях, работает за $\Omega(N \log N)$.
+\end{theorem}
 
-% \begin{theorem}{Малая теорема Ферма}{}
-%   Частный случай теоремы Эйлера для простого $p$: если $\gcd(a, p) = 1$, то
-%   \[
-%     a^{p-1} \equiv 1 \pmod{p}
-%   \]
-% \end{theorem}
+\textbf{Доказательство:}
 
-% \subsection{Расширенный алгоритм Евклида}
+Необходимо найти единственную корректную перестановку среди их множества --- всего есть $O(n!)$.
 
-% \textbf{Цель:} Обычный алгоритм Евклида находит НОД. Расширенный находит ещё и коэффициенты $x, y$ такие, что:
-% \[
-%   a \cdot x + b \cdot y = \gcd(a, b)
-% \]
-% \begin{implementation}{Реализация расишеренного алгоритма Евклида}{}
-%   \begin{lstlisting}[language=c++]
-% std::pair<int,std::pair<int,int>> Evcl(int a, int b) {
-%     if (a < b) std::swap(a, b);
-%     if (!b) return {a, {1, 0}};
-%     auto [ans, x, y] = Ecvl(b, a % b);
-%     return {ans, {y, x - a / b * y}};
-% }
-% \end{lstlisting}
-% \end{implementation}
-% Это называется \textbf{тождество Безу}.
+Всё что мы можем сделать это сравнить два элемента и понять, нужно ли их переставить. Число перестановок, которые остаются к исследованию: $\frac{n!}{2}$.
 
-% \begin{algorithm}{Расширенный алгоритм Евклида}{}
-%   Идём «назад» по шагам обычного алгоритма Евклида, выражая каждый остаток через предыдущие.
+Тогда $T(n) \geq \log(n!) = \Omega(n \log n)$.
 
-%   \textbf{Пример:} $\gcd(30, 18) = 6$.
+\begin{theorem}{lemm о факториале}{}
+  $\log N! = \Theta(N \log N)$
+\end{theorem}
 
-%   Прямой ход:
-%   \begin{align*}
-%     30 & = 18 \cdot 1 + 12 \\
-%     18 & = 12 \cdot 1 + 6  \\
-%     12 & = 6 \cdot 2 + 0
-%   \end{align*}
+\textbf{Доказательство:}
 
-%   Обратный ход:
-%   \begin{align*}
-%     6 & = 18 - 12 \cdot 1                \\
-%     6 & = 18 - (30 - 18 \cdot 1) \cdot 1 \\
-%     6 & = 18 - 30 + 18                   \\
-%     6 & = 18 \cdot 2 - 30 \cdot 1
-%   \end{align*}
+По формуле Стирлинга:
+\[
+  \log N! \sim \log\sqrt{2\pi n} \left(\frac{n}{e}\right)^n = \frac{1}{2}\log(2\pi n) + n \log n - n \log e = \Theta(N \log N)
+\]
 
-%   Итак, $x = -1, y = 2$: $30 \cdot (-1) + 18 \cdot 2 = -30 + 36 = 6$.
-% \end{algorithm}
+\subsection{Стабильные сортировки}
 
-% \subsection{Поиск обратного в $\mathbb{Z}_m$}
+\begin{definition}{Устойчивость (стабильность) сортировки}{}
+  Устойчивость (стабильность) сортировки говорит о том, что элементы, одинаковые для сравнения, не поменяют своего расположения относительно друг друга после сортировки.
+\end{definition}
 
-% \begin{definition}{Обратный элемент}{}
-%   Число $a^{-1}$ такое, что $a \cdot a^{-1} \equiv 1 \pmod{m}$. Существует только если $\gcd(a, m) = 1$.
-% \end{definition}
+\clearpage
+\section{Сортировка слиянием. Посчёт количества инверсий}
 
-% \textbf{Метод 1: Через теорему Эйлера}
+\subsection{Сортировка слиянием}
 
-% Из теоремы Эйлера: $a^{\varphi(m)} \equiv 1 \pmod{m}$.
+\textbf{Идея «Разделяй и властвуй»:}
 
-% Значит: $a \cdot a^{\varphi(m)-1} \equiv 1 \pmod{m}$.
+\begin{enumerate}
+  \item Разбить массив на две примерно равные половины.
+  \item Решить все подзадачи, применив рекурсивно шаги 1 и 3, пока не дойдем до базы, в которой все тривиально (разбиваем массивы и дальше пополам, пока не дойдем до массива из одного элемента).
+  \item Объединить решения подзадач (слить два отсортированных массива в один большой).
+\end{enumerate}
 
-% Отсюда: $a^{-1} \equiv a^{\varphi(m)-1} \pmod{m}$.
+\textbf{Слияние двух отсортированных массивов:}
 
-% \textbf{Метод 2: Через расширенный алгоритм Евклида}
+Если у нас есть два отсортированных массива --- можно их слить в третий, который будет тоже отсортирован за $O(n + m)$, где $n, m$ --- размеры массивов. Достигается это методом двух указателей.
 
-% Находим $x, y$: $a \cdot x + m \cdot y = 1$.
+\textbf{Анализ сортировки слиянием:}
 
-% Тогда $a \cdot x \equiv 1 \pmod{m}$, значит $x$ и есть обратный!
+Время работы составит $n \log(n)$, согласно мастер-теореме о рекурсии: $T(n) = 2T(n/2) + n \Rightarrow T(n) = \Theta(n \log n)$.
 
-% \textbf{Какой метод лучше?} РАЕ быстрее, особенно для больших чисел.
+Потребляемая память составит $O(n)$, поскольку необходимо завести массив для слияний. Также алгоритму нужно $O(\log n)$ стековой памяти для хранения параметров рекурсивных вызовов.
 
-% \subsection{Китайская теорема об остатках}
+К счастью, алгоритм можно реализовать итеративно и без рекурсии, начав решать задачу снизу-вверх: сначала сливаем соседние массивы размеров 1, затем размеров 2, затем 4, и так далее.
+\begin{implementation}{Сортировка Слиянием}{}
+  \begin{lstlisting}[language=c++]
+vector<int> Merge(std::vector<int> lhs, std::vector<int> rhs) {
+    std::vector<int> answer(lhs.size() + rhs.size());
+    size_t lhs_index = 0;
+    size_t rhs_index = 0;
+    while (lhs_index != lhs.size() || rhs_index != rhs.size()) {
+        if (lhs_index == lhs.size()) {
+            answer[lhs_index + rhs_index] = rhs[rhs_index++];
+        } else if (rhs_index == rhs.size()) {
+            answer[lhs_index + rhs_index] = lhs[lhs_index++];
+        } else {
+            if (lhs[lhs_index] <= rhs[rhs_index]) {
+                answer[lhs_index + rhs_index] = lhs[lhs_index++];
+            } else {
+                answer[lhs_index + rhs_index] = rhs[rhs_index++];
+            }
+        }
+    }
+    return answer;
+}
+// vec - [0, n)
+std::vector<int> MergeSort(const std::vector<int>& vec, size_t left_index,
+size_t right_index) {
+    if (right_index - left_index == 1) {
+        return {vec[left_index]};
+    }
+    size_t min_index = (right_index + left_index) / 2;
+    auto sorted_segment_1 = MergeSort(vec, left_index, mid_index);
+    auto sorted_segment_2 = MergeSort(vec, mid_index, right_index);
+    return Merge(sorted_segment_1, sorted_segment_2);
+}
+    \end{lstlisting}
+\end{implementation}
 
-% \begin{theorem}{Китайская теорема об остатках (КТО)}{}
-%   Если модули $m_1, m_2, \ldots, m_k$ попарно взаимно просты, то система сравнений:
-%   \begin{align*}
-%     x & \equiv a_1 \pmod{m_1} \\
-%     x & \equiv a_2 \pmod{m_2} \\
-%       & \vdots                \\
-%     x & \equiv a_k \pmod{m_k}
-%   \end{align*}
+\subsection{Подсчёт количества инверсий}
 
-%   имеет единственное решение по модулю $M = m_1 \cdot m_2 \cdot \ldots \cdot m_k$.
-% \end{theorem}
+\textbf{Идея:} при сортировке слиянием будем проверять на новые инверсии: если элемент с индексом j из правого массива оказался меньше элемента из левого с индексом i (в ходе их сравнения), то все элементы, начиная с элемента i образуют инверсии с элементом j из правого массива. Значит к ответу нам надо прибавить lhs.size() - i (количество элементов после i, включая сам i).
+
+\begin{implementation}{Сортировка слиянием с подсчётом инверсий}{}
+  \begin{lstlisting}[language=c++]
+    int Merge(std::vector<int>& vec, int left_st, int left_end, int right_st, int right_end) {
+      int answer = 0;
+      int l_index = left_st;
+      int r_index = right_st;
+      std::vector<int> ans;
+      ans.reserve(left_end - left_st + right_end - right_st);
+      while (l_index != left_end || r_index != right_end) {
+        if (l_index == left_end) {
+          ans.push_back(vec[r_index]);
+          ++r_index;
+        } else if (r_index == right_end) {
+          ans.push_back(vec[l_index]);
+          ++l_index;
+        } else {
+          if (vec[l_index] <= vec[r_index]) {
+            ans.push_back(vec[l_index]);
+            ++l_index;
+          } else {
+            answer += (left_end - l_index);
+            ans.push_back(vec[r_index]);
+            ++r_index;
+          }
+        }
+      }
+      for (int index = left_st; index < left_end; ++index) {
+        vec[index] = ans[index - left_st];
+      }
+      for (int index = right_st; index < right_end; ++index) {
+        vec[index] = ans[index + left_end - left_st - right_st];
+      }
+      return answer;
+    }
+    
+    int MergeSort(std::vector<int>& vec, int left, int right) {
+      if (right - left == 1) {
+        return 0;
+      }
+      int mid = left + (right - left) / 2;
+      int ans1 = MergeSort(vec, left, mid);
+      int ans2 = MergeSort(vec, mid, right);
+      return ans1 + ans2 + Merge(vec, left, mid, mid, right);
+    }
+  \end{lstlisting}
+\end{implementation}
+
+P.S. Здесь используется не стандартное слияние двух отсортированных массивов, а слияние двух отсортированных отрезков одного массива.
+
+% \clearpage
+% \section{Бинарная пирамида. Определение. Поддержка свойства пирамиды}
 
 % % ==================== РАЗДЕЛ 3 ====================
 % \newpage
 % \section{Вопрос 5}
 
 % \subsection{Постановка задачи сортировки. Квадратичные сортировки}
-
-% \textbf{Постановка задачи:}
-
-% Имеется последовательность из $n$ элементов $x_1, \ldots, x_n$. Необходимо упорядочить элементы по неубыванию (невозрастанию), для удобства далее будем везде сортировать по неубыванию.
-
-% Значит нужно найти перестановку элементов: $p_1, p_2, p_3, \ldots, p_n$, т. ч. $x_{p_1} \leq x_{p_2} \leq \ldots \leq x_{p_n}$.
-
-% \begin{definition}{Сортировка, основанная на сравнениях}{}
-%   Сортировку называют основанной на сравнениях, если она работает в следующем предположении: объекты можно только сравнивать.
-% \end{definition}
-
-% \begin{definition}{Устойчивость (стабильность) сортировки}{}
-%   Устойчивость (стабильность) сортировки говорит о том, что элементы, одинаковые для сравнения, не поменяют своего расположения относительно друг друга после сортировки.
-% \end{definition}
 
 % \textbf{Три квадратичные сортировки:}
 
@@ -1301,84 +1313,7 @@ private:
 
 % \subsection{Merge Sort}
 
-% \textbf{Идея «Разделяй и властвуй»:}
-
-% \begin{enumerate}
-%   \item Разбить массив на две примерно равные половины.
-%   \item Решить все подзадачи, применив рекурсивно шаги 1 и 3, пока не дойдем до базы, в которой все тривиально (разбиваем массивы и дальше пополам, пока не дойдем до массива из одного элемента).
-%   \item Объединить решения подзадач (слить два отсортированных массива в один большой).
-% \end{enumerate}
-
-% \textbf{Слияние двух отсортированных массивов:}
-
-% Если у нас есть два отсортированных массива --- можно их слить в третий, который будет тоже отсортирован за $O(n + m)$, где $n, m$ --- размеры массивов. Достигается это методом двух указателей.
-
-% \textbf{Анализ сортировки слиянием:}
-
-% Время работы составит $n \log(n)$, согласно мастер-теореме о рекурсии: $T(n) = 2T(n/2) + n \Rightarrow T(n) = \Theta(n \log n)$.
-
-% Потребляемая память составит $O(n)$, поскольку необходимо завести массив для слияний. Также алгоритму нужно $O(\log n)$ стековой памяти для хранения параметров рекурсивных вызовов.
-
-% К счастью, алгоритм можно реализовать итеративно и без рекурсии, начав решать задачу снизу-вверх: сначала сливаем соседние массивы размеров 1, затем размеров 2, затем 4, и так далее.
-% \begin{implementation}{Сортировка Слиянием}{}
-%   \begin{lstlisting}[language=c++]
-% vector<int> Merge(std::vector<int> lhs, std::vector<int> rhs) {
-%     std::vector<int> answer(lhs.size() + rhs.size());
-%     size_t lhs_index = 0;
-%     size_t rhs_index = 0;
-%     while (lhs_index != lhs.size() || rhs_index != rhs.size()) {
-%         if (lhs_index == lhs.size()) {
-%             answer[lhs_index + rhs_index] = rhs[rhs_index++];
-%         } else if (rhs_index == rhs.size()) {
-%             answer[lhs_index + rhs_index] = lhs[lhs_index++];
-%         } else {
-%             if (lhs[lhs_index] <= rhs[rhs_index]) {
-%                 answer[lhs_index + rhs_index] = lhs[lhs_index++];
-%             } else {
-%                 answer[lhs_index + rhs_index] = rhs[rhs_index++];
-%             }
-%         }
-%     }
-%     return answer;
-% }
-% // vec - [0, n)
-% std::vector<int> MergeSort(const std::vector<int>& vec, size_t left_index,
-% size_t right_index) {
-%     if (right_index - left_index == 1) {
-%         return {vec[left_index]};
-%     }
-%     size_t min_index = (right_index + left_index) / 2;
-%     auto sorted_segment_1 = MergeSort(vec, left_index, mid_index);
-%     auto sorted_segment_2 = MergeSort(vec, mid_index, right_index);
-%     return Merge(sorted_segment_1, sorted_segment_2);
-% }
-%     \end{lstlisting}
-% \end{implementation}
-
 % \subsection{Теорема о нижней границе времени работы сортировки}
-
-% \begin{theorem}{Нижняя оценка сортировки сравнениями}{}
-%   Сортировка, основанная на сравнениях, работает за $\Omega(N \log N)$.
-% \end{theorem}
-
-% \textbf{Доказательство:}
-
-% Необходимо найти единственную корректную перестановку среди их множества --- всего есть $O(n!)$.
-
-% Всё что мы можем сделать это сравнить два элемента и понять, нужно ли их переставить. Число перестановок, которые остаются к исследованию: $\frac{n!}{2}$.
-
-% Тогда $T(n) \geq \log(n!) = \Omega(n \log n)$.
-
-% \begin{theorem}{lemm о факториале}{}
-%   $\log N! = \Theta(N \log N)$
-% \end{theorem}
-
-% \textbf{Доказательство:}
-
-% По формуле Стирлинга:
-% \[
-%   \log N! \sim \log\sqrt{2\pi n} \left(\frac{n}{e}\right)^n = \frac{1}{2}\log(2\pi n) + n \log n - n \log e = \Theta(N \log N)
-% \]
 
 % \subsection{LSD и MSD}
 
