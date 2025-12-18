@@ -1,0 +1,2489 @@
+\documentclass[a4paper,15pt]{article}
+
+% Пакеты для русского языка и кодировки
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage[T2A]{fontenc}
+\usepackage{listings}
+% Геометрия страницы
+\usepackage[top=2cm, bottom=2cm, left=2.5cm, right=2.5cm]{geometry}
+
+% Математические пакеты
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+
+% Графика и цвета
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage[most]{tcolorbox}
+\tcbset{breakable}
+
+% Улучшенное форматирование
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+
+% Определение цветов
+\definecolor{titlecolor}{RGB}{65,65,152}
+\definecolor{sectioncolor}{RGB}{70,130,180}
+\definecolor{subsubsectioncolor}{RGB}{5,5,92}
+\definecolor{defcolor}{RGB}{0,100,0}
+\definecolor{thmcolor}{RGB}{139,0,0}
+\definecolor{implcolor}{RGB}{148,0,211}  % Новый цвет для реализаций - фиолетовый
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                                   
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+% Настройка заголовков секций
+\titleformat{\section}
+  {\Large\bfseries\color{sectioncolor}}
+  {\thesection}{1em}{}
+
+\titleformat{\subsection}
+  {\large\bfseries\color{titlecolor}}
+  {\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+  {\large\bfseries\color{subsubsectioncolor}}
+  {\thesubsubsection}{1em}{}
+
+% Настройка колонтитулов
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Билеты к экзамену по алгоритмам}
+\fancyhead[R]{\small Если найдете ошибки, пишите}
+\fancyfoot[C]{\thepage}
+\fancyfoot[L]{\small \href{https://t.me/geomemia}{Телеграмм канал автора}}
+\fancyfoot[R]{\small \href{https://t.me/seniorprocrastinator}{Автор}}
+
+% Определение окружений для теорем и определений
+\tcbuselibrary{theorems}
+
+\newtcbtheorem[number within=section]{definition}{Определение}%
+{colback=green!5,colframe=defcolor!75!black,fonttitle=\bfseries}{def}
+
+\newtcbtheorem[number within=section]{theorem}{Теорема}%
+{colback=red!5,colframe=thmcolor!75!black,fonttitle=\bfseries}{thm}
+
+\newtcbtheorem[number within=section]{lemma}{Лемма}%
+{colback=magenta!5,colframe=magenta!75!black,fonttitle=\bfseries}{thm}
+
+\newtcbtheorem[number within=section]{algorithm}{Алгоритм}%
+{colback=blue!5,colframe=blue!75!black,fonttitle=\bfseries}{alg}
+
+\newtcbtheorem[number within=section]{implementation}{Реализация}%
+{colback=violet!5,colframe=implcolor!75!black,fonttitle=\bfseries}{impl}
+
+\newtcbtheorem[number within=section]{task}{Задача}%
+{colback=cyan!5,colframe=cyan!75!black,fonttitle=\bfseries}{impl}
+
+\newtcbtheorem[number within=section]{example}{Пример}%
+{colback=orange!5,colframe=orange!75!black,fonttitle=\bfseries}{impl}
+
+% Титульная страница
+\title{\textbf{\HugeКоллоквиум}\\[0.5em]
+\Large«Алгоритмы и структуры данных»\\[1em]
+\large Если найдете опечатки или неправильность пишите}
+\author{\href{https://t.me/seniorprocrastinator}{Автор}}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{Понятие временной и пространственной (по памяти) сложности алгоритма. Определение
+  асимптотических сравнений $O$, $\Theta$, $\Omega$. Примеры}
+
+\subsection{Временная и пространственная сложности алгоритма}
+\begin{definition}{Временная сложность алгоритма}{}
+  Временной сложностью называется количество операций, выполняемых алгоритмом, в зависимости от входных данных.
+\end{definition}
+
+\begin{definition}{Пространственная (по памяти) сложность алгоритма}{}
+  Пространственной сложностью называется количество памяти, требуемой алгоритмом, в зависимости от входных данных.
+\end{definition}
+
+\subsection{Асимптотические сравнения}
+
+\begin{definition}{Асимптотическая положительность}{}
+  Функция $f(n)$ является асимптотически положительной, если
+  \[
+    \exists N_0 : \forall n > N_0, f(n) > 0.
+  \]
+\end{definition}
+
+\begin{definition}{Асимптотическая неотрицательность}{}
+  Функция $f(n)$ является асимптотически неотрицательной, если
+  \[
+    \exists N_0 : \forall n > N_0, f(n) \geq 0.
+  \]
+\end{definition}
+
+\begin{definition}{O-большое}{}
+  Рассмотрим множество функций:
+  \[
+    f(n) \in O(g(n)) \Longleftrightarrow \exists N_0 > 0, \exists C > 0 : \forall n \geq N_0 \quad 0 \leq f(n) \leq C \cdot g(n)
+  \]
+
+  Говорят что: $f$ асимптотически не больше, чем $g$, или $f$ не больше, чем $g$ с точностью до константы. Также можно сказать что $f$ это $O$-большое от $g$.
+\end{definition}
+
+\begin{definition}{$\Omega$ (Омега)}{}
+  Рассмотрим множество функций:
+  \[
+    f(n) \in \Omega(g(n)) \Longleftrightarrow \exists N_0 > 0, \exists C > 0 : \forall n \geq N_0 \quad f(n) \geq C \cdot g(n) \geq 0
+  \]
+
+  Говорят что: $f$ не меньше, чем $g$, или $g$ --- нижняя оценка для $f$. Также можно сказать что $f$ это $\Omega$ от $g$.
+\end{definition}
+
+\begin{definition}{$\theta$ (тета)}{}
+  Рассмотрим множество функций:
+  \[
+    f(n) \in \Theta(g(n)) \Longleftrightarrow \exists N_0 > 0, \exists C_1 > 0, \exists C_2 > 0 : \forall n \geq N_0 \quad C_1 g(n) \leq f(n) \leq C_2 g(n)
+  \]
+
+  Говорят что: $g(n)$ --- асимптотически точная оценка $f(n)$. Также можно сказать что $f$ это $\Theta$ от $g$.
+\end{definition}
+
+\textbf{Аналогии с неравенствами:}
+\begin{center}
+  \begin{tabular}{|c|c|}
+    \hline
+    Соотношение           & Аналогия   \\ \hline
+    $f(n) = O(g(n))$      & $a \leq b$ \\ \hline
+    $f(n) = \Theta(g(n))$ & $a = b$    \\ \hline
+    $f(n) = \Omega(g(n))$ & $a \geq b$ \\ \hline
+  \end{tabular}
+\end{center}
+
+\subsection{Примеры}
+
+\begin{example}{Временная и пространственная сложность бинарного поиска}{}
+  Временная сложность: $O(logn)$
+
+  Пространственная сложность: $O(1)$ (так как дополнительная память никак не зависит от входных данных)
+\end{example}
+
+\begin{example}{Временная и пространственная сложность префикстых сумм}{}
+  Временная сложность: $O(n)$
+
+  Пространственная сложность: $O(n)$ (если хотим сохранить исходный массив, создаём новый для префикстых сумм)
+\end{example}
+
+\begin{example}{Временная и пространственная сложность дерева отрезков}{}
+  Временная сложность построения: $O(nlogn)$
+
+  Временная сложность обработки запроса: $O(logn)$
+
+  Пространственная сложность: $O(n)$
+\end{example}
+
+\clearpage
+
+\section{Бинарный поиск. Бинарный поиск по ответу. Временная сложность}
+\subsection{Бинарный поиск}
+\begin{definition}{Бинарный поиск}{}
+  Бинарный поиск --- алгоритм поиска элемента в отсортированном массиве, который делит поисковый интервал пополам, и продолжает поиск в нужной половине.
+\end{definition}
+
+\begin{algorithm}{Бинарный поиск}{}
+  \textbf{Вход:} отсортированный массив $arr$, элемент $target$.\\
+  \textbf{Выход:} индекс элемента или $-1$, если не найден.
+\end{algorithm}
+
+\begin{implementation}{Бинарный поиск}{}
+  \begin{lstlisting}[language=C++]
+int binary_search(vector<int>& arr, int target) {
+  int left = 0, right = arr.size() - 1;
+  while (left <= right) {
+    int mid = left + (right - left) / 2;
+    if (arr[mid] == target) return mid;
+    if (arr[mid] < target) left = mid + 1;
+    else right = mid - 1;
+  }
+  return -1;
+}
+\end{lstlisting}
+\end{implementation}
+
+\subsection{Бинарный поиск по ответу}
+\begin{definition}{Бинарный поиск по ответу}{}
+  Бинарный поиск по ответу --- алгоритм поиска ответа в диапазоне, который делит поисковый интервал пополам, и продолжает поиск в нужной половине.
+\end{definition}
+
+\begin{algorithm}{Бинарный поиск по ответу}{}
+  \textbf{Вход:} отсортированный массив $arr$, требование $target$.\\
+  \textbf{Выход:} максимальная дельта между элементами, чтобы $arr$ делился ровно на $target$ отрезков.
+\end{algorithm}
+
+\begin{implementation}{Бинарный поиск по ответу}{}
+  \begin{lstlisting}[language=C++]
+int check(const vector<int>& arr, int max_delta) {
+  int count = 1;
+  int begin_index = 0;
+  for (size_t index = 1; index < arr.size(); ++index) {
+    if (arr[index] - arr[begin_index] > max_delta) {
+      ++count;
+      begin_delta = index;
+    }
+  }
+  return count;
+}
+
+int binary_search(const vector<int>& arr, int target) {
+  int left = 0, right = INT_MAX;
+  while (left <= right) {
+    int mid = left + ((right - left) >> 1);
+    if (target <= check(arr, mid)) {
+      left = mid;
+    } else {
+      right = mid;
+    }
+  }
+  return left;
+}
+  \end{lstlisting}
+\end{implementation}
+
+\subsection{Временная сложность}
+
+Рекуррентное соотношение: $T(n) = T(n/2) + \Theta(1)$.
+
+По мастер-теореме ($a=1, b=2, c=0$, случай 2): $T(n) = \Theta(\log n)$.
+
+\clearpage
+
+\section{Вещественнозначный бинарный поиск (по ответу). Временная сложность}
+\subsection{Вещественный бинарный поиск}
+
+Применяется для поиска корней уравнений или решения задач с вещественными числами, где требуется найти значение с заданной точностью.
+
+\begin{algorithm}{Вещественный бинарный поиск (поиск корня)}{}
+  \textbf{Задача:} найти $\sqrt{n}$ с точностью $\varepsilon$.
+\end{algorithm}
+
+\begin{implementation}{Вещественный бинарный поиск (поиск корня)}{}
+  \begin{lstlisting}[language=C++]
+double sqrt_binary_search(double n, double epsilon = 1e-6) {
+  double left = 0, right = n + 1;
+  while (right - left > epsilon) {
+    double mid = (left + right) / 2;
+    if (mid * mid < n) left = mid;
+    else right = mid;
+  }
+  return (left + right) / 2;
+}
+\end{lstlisting}
+\end{implementation}
+
+\subsection{Вещественный бинарный поск по ответу}
+Просто совместить идеи бинарного поиска по ответу и вещественного бинарного поиска
+
+\subsection{Сложность вещественного бинарного поиска}
+
+Начальный интервал: $[0, n]$ (длина $n$). На каждой итерации интервал уменьшается в 2 раза. Требуемая точность: $\varepsilon$.
+
+Количество итераций $k$: $\frac{n}{2^k} \leq \varepsilon \Rightarrow k \geq \log_2\left(\frac{n}{\varepsilon}\right)$.
+
+Следовательно, $T(n) = O\left(\log\left(\frac{n}{\varepsilon}\right)\right)$.
+
+\clearpage
+
+\section{Префиксные суммы. Обобщение на произвольную обратимую операцию}
+\subsection{Префиксные суммы на массиве}
+\begin{definition}{Префиксные суммы}{}
+  Префиксная сумма (prefix sum) массива $a[0..n-1]$ --- это массив $p[0..n]$, где:
+  \[
+    p[i] = \sum_{j=0}^{i-1} a[j] = a[0] + a[1] + \ldots + a[i-1]
+  \]
+\end{definition}
+
+\begin{implementation}{Построение префиксных сумм}{}
+  \begin{lstlisting}[language=C++]
+vector<int> build_prefix_sum(vector<int>& arr) {
+  vector<int> prefix(arr.size() + 1, 0);
+  for (int i = 1; i <= arr.size(); i++) {
+    prefix[i] = prefix[i-1] + arr[i-1];
+  }
+  return prefix;
+}
+\end{lstlisting}
+\end{implementation}
+
+\textbf{Применение:} быстрое вычисление суммы на отрезке $[l, r]$:
+\[
+  sum(l, r) = p[r+1] - p[l]
+\]
+
+\begin{implementation}{Запрос суммы на отрезке}{}
+  \begin{lstlisting}[language=C++]
+int range_sum(vector<int>& prefix, int l, int r) {
+  return prefix[r+1] - prefix[l];
+}
+\end{lstlisting}
+\end{implementation}
+
+\textbf{Сложность:}
+\begin{itemize}
+  \item Построение: $\Theta(n)$
+  \item Запрос: $\Theta(1)$
+  \item Память: $\Theta(n)$
+\end{itemize}
+\subsection{Двумерные префиксные суммы}
+
+Для матрицы $a[m][n]$ строится матрица $p[m+1][n+1]$, где:
+\[
+  p[i][j] = \sum_{x=0}^{i-1} \sum_{y=0}^{j-1} a[x][y]
+\]
+\begin{implementation}{Построение двумерных префиксных сумм}{}
+  \begin{lstlisting}[language=C++]
+vector<vector<int>> build_prefix_sums_2d(const vector<vector<int>>& a) {
+    int n = a.size();
+    int m = a[0].size();
+    vector<vector<int>> prefix_sum(n + 1, vector<int>(m + 1, 0));
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            prefix_sum[i + 1][j + 1] = prefix_sum[i][j + 1] + prefix_sum[i + 1][j] - prefix_sum[i][j] + a[i][j];
+        }
+    }
+    return prefix_sum;
+}
+\end{lstlisting}
+\end{implementation}
+
+Сумма в прямоугольнике $[x_1, y_1]$ до $[x_2, y_2]$:
+\[
+  sum = p[x_2+1][y_2+1] - p[x_1][y_2+1] - p[x_2+1][y_1] + p[x_1][y_1]
+\]
+
+\begin{implementation}{Запрос суммы в прямоугольнике}{}
+  \begin{lstlisting}[language=c++]
+        int64_t get_sum(std::vector<std::vector<int>>& pref, int x1, int y1, 
+                        int x2, int y2) {
+        return prefix[x2+1][y2+1] - prefix[x1][y2+1] - prefix[x2+1][y1]
+               + prefix[x1][y1]
+        }
+    \end{lstlisting}
+\end{implementation}
+
+\subsection{Обобщение на многомерный случай}
+Для обобщения на многомерный случай потребуется формула включения/исклчения. Применять по аналогии с одномерным и двуменым случаями в построении и поиске ответа.
+
+\subsection{Обобщение на произвольную обратимую операцию}
+\begin{definition}{Обратимая операция}{}
+  Обратимой операцией называется операция, которую можно отменить, применив обратную операцию. Например, для * отменяющая операция --- /, а для xor --- сам xor.
+\end{definition}
+
+По аналогии с суммой можно использовать любую другую обратимую операцию. Например, разность, умножение, деление, xor и т.д.
+
+\newpage
+\section{Факторизация числа. Функция Эйлера. Сводимость вычисления функции Эйлера к факторизации}
+
+\subsection{Факторизация числа}
+
+\begin{definition}{Факторизцаия числа}{}
+  Разбиение числа на его простые делители (8 = 2 * 2 * 2)
+\end{definition}
+
+\begin{algorithm}{Факторизация числа}{}
+  \textbf{Задача: } Дано число $n$. Вывести его в виде произведения простых чисел.
+
+  \textbf{Идея: } Пройдёмся числом $i$ по числам от 2 до $\sqrt{n}$. Если встретили число, тогда есть 2 варианта:
+  \begin{enumerate}
+    \item $i$ - простое число. Если число $n$ не делится на $i$, просто пропускаем это число. Иначе записываем в ответ это число $i$ столько раз, сколько число $n$ делится на $i$, а потом поделим $n$ на $i$ это количество раз. После этого $n$ не будет делиться на $i$. То есть получится, что $n$ больше не делится ни на одно простое число <= $i$.
+    \item $i$ - составное число. Так как это число состоит из произведения простых чисел до $i$, а число $n$ в данный момент не делится ни на одно простое число $i$, значит $n$ гарантированно не делится на число $i$. То есть число $n$ не делится ни на одно число <= $i$, будь то простое или составное.
+  \end{enumerate}
+
+  В итоге получили, что число $n$ или равно 1, или простое число (так как не делится ни на одно число <= $\sqrt{n}$), которое мы записываем в ответ.
+
+  \textbf{Время работы: } если число простое, то $i$ просто пройдётся по числам от 2 до $\sqrt{n}$, что в итоге составит сложность $O(\sqrt{n})$. Если не простое, то получаем сложность не хуже $i+T(\frac{n}{2^i})$, что $T(n)$, значит меньше худшего случая, где $n$ - простое число. (Лучшем случаем будет степень двойки, тогда сложность будет равна $O(logn)$)
+\end{algorithm}
+
+\begin{implementation}{Факторицазия числа}{}
+  \begin{lstlisting}[language=c++]
+std::vector<int> factorization(int number) {
+  std::vector<int> answer;
+  int num = 2;
+  while (num * num <= number) {
+    while (!(number % num)) {
+      answer.push_back(num);
+      number /= num;
+    }
+    ++num;
+  }
+  return answer;
+}
+\end{lstlisting}
+\end{implementation}
+
+\subsection{Функция Эйлера}
+
+\begin{definition}{Функция Эйлера}{}
+  Функция Эйлера $\varphi(a)$ определяется для всех целых положительных $a$ и представляет собою количество чисел ряда $0, 1, \ldots, a-1$, взаимно простых с $a$.
+\end{definition}
+
+\subsection{Сводимость вычисления функции Эйлера к факторизации}
+
+\begin{theorem}{Формула для функции Эйлера}{}
+  \[
+    \varphi(a) = a \left(1 - \frac{1}{p_1}\right) \left(1 - \frac{1}{p_2}\right) \ldots \left(1 - \frac{1}{p_k}\right)
+  \]
+  где $p_1, p_2, \ldots, p_k$ --- различные простые делители числа $a$.
+\end{theorem}
+
+\textbf{Пример:} $\varphi(60) = 60 \cdot (1 - 1/2) \cdot (1 - 1/3) \cdot (1 - 1/5) = 60 \cdot 1/2 \cdot 2/3 \cdot 4/5 = 16$.
+
+\begin{task}{Выведение формулы Эйлера}{}
+  \begin{enumerate}
+    \item Рассмотрим простой случай: n - простое число (то есть n = p). Очевидно, для любого простого числа количество чисел, взаимно простых с ним и меньших него равно p - 1.
+
+    \item Теперь пусть $n=p^\alpha$. Тогда числа, не взаимно простые с $n$ и меньшие его - все числа, делящиеся на p. Таких ровно $\frac{p^\alpha}{p}$. Тогда $\varphi(n)=p^\alpha-\frac{p^\alpha}{p}=p^\alpha(1-\frac{1}{p})$
+
+    \item Так как функция Эйлера мультипликативна (то есть $\varphi(a\cdot b)=\varphi(a)\cdot\varphi(b)$), если $n=p_1^{\alpha_1}\cdot ...\cdot p_k^{\alpha_k}$. Тогда $\varphi(n)=\varphi(p_1^{\alpha_1}\cdot ...\cdot p_k^{\alpha_k})=\varphi(p_1^{\alpha_1})\cdot ...\cdot\varphi(p_k^{\alpha_k})=n(1-\frac{1}{p_1})...(1-\frac{1}{p_k})$
+  \end{enumerate}
+\end{task}
+
+\clearpage
+\section{Классическое решето Эратосфена за O(n log log n) (время работы б/д). Линейное решето Эратосфена}
+
+\subsection{Решето Эратосфена, время работы}
+
+\begin{algorithm}{Решето Эратосфена}{}
+  Для составления таблицы простых чисел, не превосходящих данного целого $N$:
+  \begin{enumerate}
+    \item Выписываем числа $1, 2, \ldots, N$.
+    \item Первое, большее 1 число этого ряда есть 2. Оно делится только на 1 и само на себя и, следовательно, оно простое.
+    \item Вычеркиваем все кратные двум до $N$.
+    \item Теперь первое не вычеркнутое число есть 3. Оно не делится на 2. Оно простое, вычеркиваем все кратные 3.
+    \item И т.д.
+  \end{enumerate}
+\end{algorithm}
+
+\begin{implementation}{Решето Эратосфена}{}
+  \begin{lstlisting}[language=C++]
+  std::vector<int> Erat(int num) {
+    std::vector<int> erat(n + 1, 0);
+    for (int index = 2; index * index <= num; ++index) {
+      if (!erat[index]) {
+        for (int index1=index * index; index1 <= n; index1 += index) {
+          erat[index1] = 1;
+        }
+      }
+    }
+    return erat;
+  }
+\end{lstlisting}
+\end{implementation}
+
+\textbf{Корректность:}
+
+Когда указанным способом будут вычеркнуты все числа кратные простым, меньших простого $p$, то все невычеркнутые, меньшие $p^2$, будут простыми. Действительно, всякое составное $a$, меньшее $p^2$, нами уже вычеркнуто как кратное его наименьшего простого делителя, который $\leq \sqrt{a} < p$.
+
+\textbf{Полезное примечание:}
+\begin{itemize}
+  \item При вычеркивании кратных простого $p$, это вычеркивание следует начинать с $p^2$.
+  \item Составление таблицы простых чисел, не превосходящих $N$, будет закончено, когда вычеркнуты все составные кратные простым, не превосходящим $\sqrt{N}$.
+\end{itemize}
+
+\textbf{Время работы решета Эратосфена:} $O(n \log \log n)$ (без доказательства).
+
+\subsection{Линейное решето Эратосфена}
+
+\begin{implementation}{Решето Эратосфена}{}
+  \begin{lstlisting}[language=C++]
+std::vector<int> Erat(int n) {
+    std::vector<int> erat(n + 1, 0);
+    std::vector<int> primes;
+    for (size_t index = 2; index <= n; ++index) {
+    if (erat[index] == 0) {
+        primes.push_back(index);
+        erat[index] = index;
+    }
+    for (size_t jndex = 0; jndex <       primes.size() && primes[jndex] <
+        erat[jndex] && index * primes[jndex] <= n; ++jndex) {
+        erat[index * primes[jndex]] = primes[jndex];
+    }
+    }
+    return erat;
+}
+  \end{lstlisting}
+\end{implementation}
+
+\textbf{Идея:}
+
+Каждое составное число должно быть вычеркнуто 1 раз. Для этого пройдёмся по массиву и каждому числу запишем его наименьший делитель (см. реализацию)
+
+\textbf{Корректность:}
+
+Это довольно сложная тема, в которой я до конца не разобрался. Буду рад, если разъясните в личке, но на экзамене скорее всего такого не спросят. Если спросят, скорее всего вам попался Костя, поэтому соболезную)
+
+\textbf{Время работы:}
+
+$O(n)$ (б/д)
+
+\clearpage
+\section{Арифметика в $\mathbb{Z}_m$. Малая теорема Ферма и теорема Эйлера (б/д). Критерий существования обратного по модулю. Поиск обратного по модулю.}
+
+\subsection{Модульная арифметика}
+\begin{definition}{Сравнимость по модулю}{}
+  Два целых $a$ и $b$ называются равноостаточными по модулю $m$ или сравнимыми по модулю $m$, если они дают одинаковый остаток при делении на $m$. Сравнимость чисел $a$ и $b$ по модулю $m$ записывается так:
+  \[
+    a \equiv b \pmod{m}
+  \]
+\end{definition}
+\begin{implementation}{Модульная арифметика}{}
+  \begin{lstlisting}[language=c++]
+const int64_t MOD = 1e9 + 7;
+
+int64_t BinPow(int64_t a, int64_t n) {
+  if (n == 1) {
+    return a % MOD;
+  }
+  if (n % 2) {
+    return (a * BinPow(a, n - 1)) % MOD;
+  }
+  int64_t ans = BinPow(a, n / 2);
+  return ans * ans % MOD;
+}
+
+int64_t InverseModulo(int64_t a) {
+    return BinPow(a, MOD - 2);
+}
+
+int64_t PlusMod(int64_t a, int64_t b) {
+    return (a + b) % MOD;
+}
+
+int64_t MinusMod(int64_t a, int64_t b) {
+    return (a - b + MOD) % MOD;
+}
+
+int64_t MultiplyMod(int64_t a, int64_t b) {
+    return (a * b) % MOD;
+}
+
+int64_t DivideMod(int64_t a, int64_t b) {
+    return (a * InverseModulo(b)) % MOD;
+}
+\end{lstlisting}
+\end{implementation}
+
+\begin{algorithm}{Быстрое возведение в степень}{}
+  \textbf{Задача:} Нужно возвести число $a$ в степень $n$ по простому модулю $m$
+
+  \textbf{Реализация:} см. выше
+
+  \textbf{Идея:} если у нас $n$ чётная, то $a^n$ можно записать как $(a^{n/2})^2$, вычислить рекурсивно $a^{n/2}$ и полученный ответ возвести в квадрат за $O(1)$. В итоге мы каждый раз (в худшем случае через раз) делим степень на 2 и рекурсивно получаем ответ, поэтому
+
+  \textbf{Временная сложность:} $O(\log n)$
+\end{algorithm}
+
+\subsection{Малая теорема Ферма и теорема Эйлера (б/д)}
+
+\begin{theorem}{Теорема Эйлера}{}
+  Если $\gcd(a, m) = 1$, то
+  \[
+    a^{\varphi(m)} \equiv 1 \pmod{m}
+  \]
+\end{theorem}
+
+\begin{theorem}{Малая теорема Ферма}{}
+  Частный случай теоремы Эйлера для простого $p$: если $\gcd(a, p) = 1$, то
+  \[
+    a^{p-1} \equiv 1 \pmod{p}
+  \]
+\end{theorem}
+
+\subsection{Критерий существования обратного по модулю}
+\begin{theorem}{Критерий существования обратного по модулю}{}
+  Обратное число $x$ числу $a$ по модулю $m$ существует тогда и только тогда, тогда $a$ и $m$ взаимо просты.
+\end{theorem}
+
+\textbf{Необходимость:} Пусть НОД($a$, $m$) = $d$. Тогда $ax\equiv 1(mod m)\Leftrightarrow ax-mk=1$. Т.к. и $a$, и $m$ делится на d, всё выражение $ax-mk$ делится на d, значит и 1 делится на $d$, но единственный делитель 1 --- само число 1. Значит $d=1$
+
+\textbf{Достаточность:} НОД($a$, $m$) = 1 $\Rightarrow\exists u,v:au+mv=1$. Рассмотрим это уравнение по модулю $m$. Так как $mv\equiv 0(mod m)$, $au\equiv 1(mod m)$. Ч.Т.Д.
+
+\subsection{Поиск обратного по модулю}
+\textbf{Идея:} Рассмотрим частный случай простого модуля $p$. По малой теореме Ферма: $a^{p-1}\equiv 1(mod p)$, следовательно, $a^{p-2}\equiv a^{-1}(mod m)$. Тогда, используя быстрое возведение в степень, найдём $a^{p-2}$, что и будет являться обратным по простому модулю $p$ для числа $a$. Сложность алгоритма для простого модуля: $O(logn)$
+
+Теперь рассмотрим общий случай не простого модуля $m$. По теореме Эйлера: $a^\varphi(m)\equiv 1(mod m)$, следовательно, $a^{\varphi(m)-1}\equiv a^{-1}(mod m)$. Тогда, найдя $\varphi(m)$ за $\sqrt{m}$ через факторизацию числа, и используя быстрое возведение в степень, получим обратное по модулю $m$. Сложность такого алгоритма: $O(\sqrt{m} + \log n)$
+
+\clearpage
+\section{Критерий существования обратного по модулю. Поиск обратного по модулю. Алгоритм Евклида (классический, б/д)}
+
+\subsection{Критерий существования обратного по модулю}
+
+См. выше
+
+\subsection{Поиск обратного по модулю}
+
+См. выше
+
+\subsection{Алгоритм Евклида (классический, б/д)}
+
+\begin{theorem}{Основная теорема алгоритма Евклида}{}
+  Если $a = bq + r$, то $(a, b) = (b, r)$.
+\end{theorem}
+
+\begin{algorithm}{Алгоритм Евклида}{}
+  Пусть $a$ и $b$ --- положительные целые, и $a > b$, тогда по теореме о делении с остатком получим систему равенств:
+  \begin{align*}
+    a   & = bq_1 + r_2, \quad 0 < r_2 < b     \\
+    b   & = r_2q_2 + r_3, \quad 0 < r_3 < r_2 \\
+    r_2 & = r_3q_3 + r_4, \quad 0 < r_4 < r_3 \\
+        & \vdots
+  \end{align*}
+
+  Этот ряд можно продолжать пока не получим 0. Заметим, что:
+  \[
+    (a, b) = (b, r_2) = (r_2, r_3) = \ldots = (r_{n-1}, r_n) = r_n
+  \]
+\end{algorithm}
+\begin{algorithm}{Реализация алгоритма Евклида}{}
+\end{algorithm}
+
+\begin{implementation}{Алгоритм Евклида}{}
+  \begin{lstlisting}[language=c++]
+int euclid(int a, int b) {
+    while (a && b) (a > b ? a %= b : b %= a);
+    return a + b;
+}
+\end{lstlisting}
+\end{implementation}
+\textbf{Сложность алгоритма Евклида:} $O(\log(\min(a,b)))$.
+
+\clearpage
+
+\section{Амортизированный анализ. Метод монеток. Метод потенциалов. Применение на примере push\_back в динамическом массиве}
+
+\subsection{Амортизационный анализ}
+
+\begin{definition}{Амортизационный анализ}{}
+  Пусть наша программа состоит из элементарных кусков (операций), $i$-й из которых работает $t_i$.
+  \begin{itemize}
+    \item Реальное время -- $t_i$
+    \item Среднее время -- $t_{\text{avg}} = \frac{\sum_i t_i}{n}$
+    \item Амортизированное время одной операции -- $a_i = t_i + \Delta \varphi_i$
+  \end{itemize}
+\end{definition}
+
+\subsection{Метод монет}
+
+\subsubsection{Принцип}
+
+\begin{definition}{}{}
+  В методе в ходе группового анализа, разные операции оцениваются по-разному, в зависимости от их фактической стоимости. Величина, которая начисляется на операцию, называется амортизированной стоимостью (amortized cost). Если амортизированная стоимость операции превышает ее фактическую стоимость, то соответствующая разность присваивается определенным объектам структуры данных как кредит (credit). Кредит можно использовать впоследствии для компенсирующих выплат на операции, амортизированная стоимость которых меньше их фактической стоимости.
+\end{definition}
+
+\textbf{Важно:} К выбору стоимости стоит подходить осторожно. Должно выполняться соотношение:
+\[
+  \sum_i a_i \geq \sum_i t_i
+\]
+
+То есть полный кредит в любой момент времени должен быть неотрицательным.
+
+\subsubsection{Пример}
+
+\begin{task}{push\_back}{}
+  \textbf{Задача:} доказать, что push\_back в динамическом массиве работает за $O^*(1)$
+
+  \textbf{Решение:} применим метод монет:
+
+  Если в данный момент есть место для вставки элемента, сделаем это и добавим в банк 2 монеты (за выделение место под 2 элемента в будущем). Когда у нас закончится место, заберём деньги из банка и пустем их на выделение места под новые элемента. Это нам ничего не зудет стоить. Поэтому амортизированно у нас push\_back будет работать за $O^*(1)$.
+\end{task}
+
+\subsection{Метод потенциалов}
+
+\subsubsection{Принцип}
+
+\begin{definition}{Метод потенциалов}{}
+  Функция потенциала $\varphi$ --- отображает структуру данных $D_i$ на действительное число $\varphi(D_i)$, которое является потенциалом, связанным со структурой данных. Амортизированная стоимость $i$-ой операции:
+  \[
+    a_i = t_i + \varphi(D_i) - \varphi(D_{i-1})
+  \]
+\end{definition}
+
+\textbf{Соотношение:}
+\[
+  \sum_i a_i = \sum_i (t_i + \varphi(D_i) - \varphi(D_{i-1})) = \sum_i t_i + \varphi(D_n) - \varphi(D_0)
+\]
+
+Если потенциал можно определить так, что $\varphi(D_n) - \varphi(D_0) \geq 0$, то суммарная амортизированная стоимость даст верхнюю границу полной фактической стоимости.
+
+\textbf{Соотношение:} Если потребовать $\varphi(D_i) \geq \varphi(D_0), \forall i$, то мы как и в методе бухучета получим предоплату операций.
+
+\subsubsection{Пример}
+
+\begin{task}{push\_back}{}
+  \textbf{Задача:} доказать, что push\_back в динамическом массиве работает за $O^*(1)$
+
+  \textbf{Решение:} применим метод потенциалов:
+
+  Пусть $\varphi(D)=2\cdot size - capacity$
+
+  Тогда:
+
+  \begin{enumerate}
+    \item Без переаллоцирования памяти: $a_i=1+2\cdot (size + 1) - capacity - 2\cdot size + capacity = 3$
+    \item С переаллоцированием памяти: $a_i=1+2\cdot (size + 1) - capacity \cdot 2 - 2\cdot size + capacity\cdot 2 = 3$
+  \end{enumerate}
+\end{task}
+
+\clearpage
+\section{Линейные контейнеры. Односвязный и двусвязный списки. Стек, очередь, дек (через
+  списки и через кольцевой буффер)}
+
+\subsection{Односвязный и двусвязный списки}
+
+\begin{definition}{Односвязный список}{}
+  Односвязный список --- последовательный набор из узлов с данными, где каждый узел знает, где лежит следующий за ним.
+\end{definition}
+\begin{implementation}{Односвязный список}{}
+  \begin{lstlisting}[language=c++]
+struct Node {
+    int val;
+    Node* next;
+
+    Node(int _val) : val(_val), next(nullptr) {}
+};
+struct list {
+    Node* first;
+    Node* last;
+
+    list() : first(nullptr), last(nullptr) {}
+
+    bool is_empty() {
+        return first == nullptr;
+    }
+
+    void push_back(string _val) {
+        Node* p = new Node(_val);
+        if (is_empty()) {
+            first = p;
+            last = p;
+            return;
+        }
+        last->next = p;
+        last = p;
+    }
+
+    void print() {
+        if (is_empty()) return;
+        Node* p = first;
+        while (p) {
+            cout << p->val << " ";
+            p = p->next;
+        }
+        cout << endl;
+    }
+}
+\end{lstlisting}
+\end{implementation}
+
+\begin{definition}{Двусвязный список}{}
+  Двусвязный список --- последовательный набор из узлов с данными, где каждый узел знает, где лежат следующий и предыдущий узлы.
+\end{definition}
+\begin{implementation}{Двусвязный список}{}
+  \begin{lstlisting}[language=c++]
+struct Node {
+    int val;
+    Node* next;
+    Node* before*
+
+    Node(int _val) : val(_val), next(nullptr) {}
+};
+struct list {
+    Node* first;
+    Node* last;
+
+    list() : first(nullptr), last(nullptr) {}
+
+    bool is_empty() {
+        return first == nullptr;
+    }
+
+    void push_back(string _val) {
+        Node* p = new Node(_val);
+        if (is_empty()) {
+            first = p;
+            last = p;
+            return;
+        }
+        last->next = p;
+        p->before = last;
+        last = p;
+    }
+
+    void print() {
+        if (is_empty()) return;
+        Node* p = first;
+        while (p) {
+            cout << p->val << " ";
+            p = p->next;
+        }
+        cout << endl;
+    }
+}
+\end{lstlisting}
+\end{implementation}
+
+\subsection{Стек, очередь, дек (через списки и через кольцевой буффер)}
+
+\begin{definition}{Стек (stack)}{}
+  Стек --- АТД, который хранит элементы и предоставляет к ним доступ в рамках парадигмы LIFO (Last in, First Out).
+\end{definition}
+
+\begin{definition}{Очередь (queue)}{}
+  Очередь --- АТД, который хранит элементы и предоставляет к ним доступ в рамках парадигмы FIFO (First in, First Out).
+\end{definition}
+
+\begin{definition}{Дек (deque)}{}
+  Дек --- АТД, который представляет из себя двустороннюю очередь, то есть можно вставлять/удалять в начало/конец.
+\end{definition}
+
+\clearpage
+\section{Линейные контейнеры. Очередь с поддержкой произвольной ассоциативной операции}
+
+% \textbf{Стек с произвольной ассоциативной операцией:}
+
+% Давайте добавим к интерфейсу стека еще возможность возвращать минимум в нем. Будем хранить в узле стека не только сам элемент, но еще и минимум в стеке. При добавлении нового элемента в стек $S$ для получения стека $S'$ будем в голову $S'$ добавлять минимум как минимум из значения элемента и значения минимума в голове $S'$.
+% \begin{algorithm}{Идея реализации}{}
+%   Будем просто поддерживать стек, в котором первым элементом хранить сам
+%   элемент, а вторым - текущий минимум. При добавлении элемента новым минимумом
+%   будет или он или предыдущий элемент. Так как у нас есть доступ только к верхнему
+%   элементу, остальные минимумы пересчитывать не надо
+% \end{algorithm}
+% \begin{implementation}{Минимум на стеке}{}
+%   \begin{lstlisting}[language=c++]
+% #include <stack>
+
+% template<typename Operation>
+% struct MinStack {
+% public:
+%     void Push(int element) {
+%         int oper_element = (data_.empty() ? element :
+%         operation_(data_.top().second, element));
+%         data_.push({element, oper_element});
+%     }
+%     void Pop() {
+%         if (!data_.empty()) {
+%             data_.pop();
+%         }
+%     }
+%     int Top() {
+%         if (data_.empty()) {
+%             return -1;
+%         }
+%         return data_.top().first;
+%     }
+%     int Get() {
+%         if (data_.empty()) {
+%             return -1;
+%     }
+%         return data_.top().second;
+%     }
+%     bool Empty() {
+%         return data_.empty();
+%     }
+% private:
+%     std::stack<std::pair<int,int>> data_;
+%     Operation operation_{};
+% }
+% \end{lstlisting}
+% \end{implementation}
+
+% \begin{definition}{Наименьшее общее кратное (НОК)}{}
+%   Всякое целое, кратное всем данным числам, называется их общим кратным. Наименьшее положительное общее кратное обозначается $[a, b, \ldots, l]$ или $\text{lcm}(a,b,\ldots,l)$.
+% \end{definition}
+% \begin{implementation}{Алгоритм поиска НОК}{}
+%   \begin{lstlisting}[language=c++]
+% int lcm(int a, int b) {
+%     return a * b / gcd(a, b);
+% }
+% \end{lstlisting}
+% \end{implementation}
+
+% \textbf{Связь НОД и НОК:}
+% \[
+%   \gcd(a,b) \cdot \text{lcm}(a,b) = a \cdot b
+% \]
+
+
+% \begin{theorem}{Эквивалентные условия сравнимости}{}
+%   Сравнимость чисел $a$ и $b$ по модулю $m$ эквивалентна:
+%   \begin{enumerate}
+%     \item Возможности представить $a$ как $a = b + mt$.
+%     \item Делимости $a - b$ на $m$.
+%   \end{enumerate}
+% \end{theorem}
+
+% \textbf{Свойства сравнений:}
+% \begin{enumerate}
+%   \item Два числа, сравнимые с третьим, сравнимы между собою.
+%   \item Сравнения можно почленно складывать.
+%   \item Слагаемое, стоящее в какой-либо части сравнения, можно переносить в другую часть, переменив знак на обратный.
+%   \item Сравнения можно почленно перемножать.
+%   \item Обе части сравнения можно возвести в одну степень.
+%   \item К каждой части сравнения можно добавить число, кратное модулю.
+%   \item Обе части сравнения можно умножить на одно и то же целое.
+% \end{enumerate}
+
+% \begin{definition}{Полная система вычетов}{}
+%   Набор из $m$ чисел, дающих все возможные остатки при делении на $m$. Обычно это $\{0, 1, 2, \ldots, m-1\}$.
+% \end{definition}
+
+% \begin{definition}{Приведённая система вычетов}{}
+%   Только те числа из полной системы, которые взаимно просты с $m$. Таких чисел $\varphi(m)$.
+% \end{definition}
+
+% \begin{theorem}{Теорема Эйлера}{}
+%   Если $\gcd(a, m) = 1$, то
+%   \[
+%     a^{\varphi(m)} \equiv 1 \pmod{m}
+%   \]
+% \end{theorem}
+
+% \begin{theorem}{Малая теорема Ферма}{}
+%   Частный случай теоремы Эйлера для простого $p$: если $\gcd(a, p) = 1$, то
+%   \[
+%     a^{p-1} \equiv 1 \pmod{p}
+%   \]
+% \end{theorem}
+
+% \subsection{Расширенный алгоритм Евклида}
+
+% \textbf{Цель:} Обычный алгоритм Евклида находит НОД. Расширенный находит ещё и коэффициенты $x, y$ такие, что:
+% \[
+%   a \cdot x + b \cdot y = \gcd(a, b)
+% \]
+% \begin{implementation}{Реализация расишеренного алгоритма Евклида}{}
+%   \begin{lstlisting}[language=c++]
+% std::pair<int,std::pair<int,int>> Evcl(int a, int b) {
+%     if (a < b) std::swap(a, b);
+%     if (!b) return {a, {1, 0}};
+%     auto [ans, x, y] = Ecvl(b, a % b);
+%     return {ans, {y, x - a / b * y}};
+% }
+% \end{lstlisting}
+% \end{implementation}
+% Это называется \textbf{тождество Безу}.
+
+% \begin{algorithm}{Расширенный алгоритм Евклида}{}
+%   Идём «назад» по шагам обычного алгоритма Евклида, выражая каждый остаток через предыдущие.
+
+%   \textbf{Пример:} $\gcd(30, 18) = 6$.
+
+%   Прямой ход:
+%   \begin{align*}
+%     30 & = 18 \cdot 1 + 12 \\
+%     18 & = 12 \cdot 1 + 6  \\
+%     12 & = 6 \cdot 2 + 0
+%   \end{align*}
+
+%   Обратный ход:
+%   \begin{align*}
+%     6 & = 18 - 12 \cdot 1                \\
+%     6 & = 18 - (30 - 18 \cdot 1) \cdot 1 \\
+%     6 & = 18 - 30 + 18                   \\
+%     6 & = 18 \cdot 2 - 30 \cdot 1
+%   \end{align*}
+
+%   Итак, $x = -1, y = 2$: $30 \cdot (-1) + 18 \cdot 2 = -30 + 36 = 6$.
+% \end{algorithm}
+
+% \subsection{Поиск обратного в $\mathbb{Z}_m$}
+
+% \begin{definition}{Обратный элемент}{}
+%   Число $a^{-1}$ такое, что $a \cdot a^{-1} \equiv 1 \pmod{m}$. Существует только если $\gcd(a, m) = 1$.
+% \end{definition}
+
+% \textbf{Метод 1: Через теорему Эйлера}
+
+% Из теоремы Эйлера: $a^{\varphi(m)} \equiv 1 \pmod{m}$.
+
+% Значит: $a \cdot a^{\varphi(m)-1} \equiv 1 \pmod{m}$.
+
+% Отсюда: $a^{-1} \equiv a^{\varphi(m)-1} \pmod{m}$.
+
+% \textbf{Метод 2: Через расширенный алгоритм Евклида}
+
+% Находим $x, y$: $a \cdot x + m \cdot y = 1$.
+
+% Тогда $a \cdot x \equiv 1 \pmod{m}$, значит $x$ и есть обратный!
+
+% \textbf{Какой метод лучше?} РАЕ быстрее, особенно для больших чисел.
+
+% \subsection{Китайская теорема об остатках}
+
+% \begin{theorem}{Китайская теорема об остатках (КТО)}{}
+%   Если модули $m_1, m_2, \ldots, m_k$ попарно взаимно просты, то система сравнений:
+%   \begin{align*}
+%     x & \equiv a_1 \pmod{m_1} \\
+%     x & \equiv a_2 \pmod{m_2} \\
+%       & \vdots                \\
+%     x & \equiv a_k \pmod{m_k}
+%   \end{align*}
+
+%   имеет единственное решение по модулю $M = m_1 \cdot m_2 \cdot \ldots \cdot m_k$.
+% \end{theorem}
+
+% % ==================== РАЗДЕЛ 3 ====================
+% \newpage
+% \section{Вопрос 5}
+
+% \subsection{Постановка задачи сортировки. Квадратичные сортировки}
+
+% \textbf{Постановка задачи:}
+
+% Имеется последовательность из $n$ элементов $x_1, \ldots, x_n$. Необходимо упорядочить элементы по неубыванию (невозрастанию), для удобства далее будем везде сортировать по неубыванию.
+
+% Значит нужно найти перестановку элементов: $p_1, p_2, p_3, \ldots, p_n$, т. ч. $x_{p_1} \leq x_{p_2} \leq \ldots \leq x_{p_n}$.
+
+% \begin{definition}{Сортировка, основанная на сравнениях}{}
+%   Сортировку называют основанной на сравнениях, если она работает в следующем предположении: объекты можно только сравнивать.
+% \end{definition}
+
+% \begin{definition}{Устойчивость (стабильность) сортировки}{}
+%   Устойчивость (стабильность) сортировки говорит о том, что элементы, одинаковые для сравнения, не поменяют своего расположения относительно друг друга после сортировки.
+% \end{definition}
+
+% \textbf{Три квадратичные сортировки:}
+
+% \begin{enumerate}
+%   \item \textbf{Сортировка пузырьком:} Выполним $n$ итераций, в результате каждой из которых самый большой элемент «всплывает» в конец. В процессе итерации пробегаем из начала в конец и меняем соседние элементы, которые стоят не по порядку.
+%         \begin{algorithm}{Сортировка пузырьком}{}
+%         \end{algorithm}
+
+%         \begin{implementation}{Расширенный алгоритм Евклида}{}
+%           \begin{lstlisting}[language=c++]
+% void BubbleSort(std::vector<int>& vec) {
+%     for (size_t index = 0; index < vec.size(); ++index) {
+%         for (size_t jndex = 0; jndex < vec.size() - 1; ++jndex) {
+%             if (vec[jndex] > vec[jndex + 1]) {
+%                 std::swap(vec[jndex], vec[jndex + 1]);
+%             }
+%         }
+%     }
+% }
+%     \end{lstlisting}
+%         \end{implementation}
+
+%   \item \textbf{Сортировка выбором:} На $i$-ой итерации ищем на отрезке $[i, n-1]$ наименьший элемент и меняем его с $i$-ым местами.
+%         \begin{implementation}{Сортировка выбором}{}
+%           \begin{lstlisting}[language=c++]
+% void SelectionSort(std::vector<int>& vec) {
+%     for (size_t index = 0; index < vec.size(); ++index) {
+%         size_t index_of_minimal_element = index;
+%         for (size_t jndex = index; jndex < vec.size(); ++jndex) {
+%             if (vec[index_of_minimal_element] > vec[jndex]) {
+%                 index_of_minimal_element = jndex;
+%             }
+%         }
+%         std::swap(vec[index],   vec[index_of_minimal_element]);
+%     }
+% }
+%     \end{lstlisting}
+%         \end{implementation}
+
+%   \item \textbf{Сортировка вставками:} На $i$-ой итерации ищем, куда вставить элемент на отрезке $[0, i]$, таким образом отрезок $[0, i]$ всегда отсортирован.
+%         \begin{implementation}{Сортировка встаавками}{}
+%           \begin{lstlisting}[language=c++]
+% void InsertionSort(std::vector<int>& vec) {
+%     for (size_t index = 1; index < vec.size(); ++index) {
+%         int element = vec[index];
+%         size_t jndex = index;
+%         while (jndex > 0 && vec[jndex - 1] > element) {
+%             vec[jndex] = vec[jndex - 1];
+%             --jndex;
+%         }
+%         vec[jndex] = element;
+%     }
+% }
+%     \end{lstlisting}
+%         \end{implementation}
+% \end{enumerate}
+
+% \textbf{Сравнение квадратичных сортировок:}
+
+% \begin{center}
+%   \begin{tabular}{|l|c|c|c|}
+%     \hline
+%     Сортировка & Время    & Память & Стабильность \\ \hline
+%     Пузырьком  & $O(n^2)$ & $O(1)$ & Да           \\ \hline
+%     Выбором    & $O(n^2)$ & $O(1)$ & Да           \\ \hline
+%     Вставками  & $O(n^2)$ & $O(1)$ & Да           \\ \hline
+%   \end{tabular}
+% \end{center}
+
+% \subsection{Сортировка Шелла. Время работы}
+
+% \textbf{Идея:} Улучшенная сортировка вставками. Вместо сравнения соседних элементов, сравниваем элементы на расстоянии $h$ (шаг). Постепенно уменьшаем $h$ до 1.
+
+% \textbf{Обоснование:} Один обмен соседей может убрать не более 1 инверсии. Если увеличить шаг, то число возможных убираемых инверсий может быть, очевидно, больше чем 1 (если повезет может быть много).
+
+% \textbf{Время работы (без доказательства):}
+
+% В книге «Искусство программирования», Д. Кнут очень много страниц анализирует сортировку Шелла:
+% \begin{itemize}
+%   \item Шелл предлагал делать шаги размеров от $n/2, n/4, \ldots, 1$. В итоге это давало сложность $O(n^2)$.
+%   \item Кнут, в свою очередь, предложил последовательность, дающую сложность в среднем случае $O(n^{4/3})$, в худшем $O(n^{3/2})$.
+%   \item Собственно последовательность, предложенная Кнутом: $t_0 = 1, t_i = 3t_{i-1} + 1$.
+% \end{itemize}
+% \begin{implementation}{Сортировка Шелла}{}
+%   \begin{lstlisting}[language=c++]
+% void ShellSort(std::vector<int>& vec) {
+%     for (size_t step = vec.size() / 2; step > 1; ++step) {
+%         for (size_t index = step; index < vec.size(); ++index) {
+%             int element = vec[index];
+%             size_t jndex = index;
+%             while (jndex / step > 0 && vec[jndex - step] > element) {
+%                 vec[jndex] = vec[jndex - step];
+%                 jndex -= step;
+%             }
+%         vec[jndex] = element;
+%         }
+%     }
+% }
+%     \end{lstlisting}
+% \end{implementation}
+
+% \subsection{Merge Sort}
+
+% \textbf{Идея «Разделяй и властвуй»:}
+
+% \begin{enumerate}
+%   \item Разбить массив на две примерно равные половины.
+%   \item Решить все подзадачи, применив рекурсивно шаги 1 и 3, пока не дойдем до базы, в которой все тривиально (разбиваем массивы и дальше пополам, пока не дойдем до массива из одного элемента).
+%   \item Объединить решения подзадач (слить два отсортированных массива в один большой).
+% \end{enumerate}
+
+% \textbf{Слияние двух отсортированных массивов:}
+
+% Если у нас есть два отсортированных массива --- можно их слить в третий, который будет тоже отсортирован за $O(n + m)$, где $n, m$ --- размеры массивов. Достигается это методом двух указателей.
+
+% \textbf{Анализ сортировки слиянием:}
+
+% Время работы составит $n \log(n)$, согласно мастер-теореме о рекурсии: $T(n) = 2T(n/2) + n \Rightarrow T(n) = \Theta(n \log n)$.
+
+% Потребляемая память составит $O(n)$, поскольку необходимо завести массив для слияний. Также алгоритму нужно $O(\log n)$ стековой памяти для хранения параметров рекурсивных вызовов.
+
+% К счастью, алгоритм можно реализовать итеративно и без рекурсии, начав решать задачу снизу-вверх: сначала сливаем соседние массивы размеров 1, затем размеров 2, затем 4, и так далее.
+% \begin{implementation}{Сортировка Слиянием}{}
+%   \begin{lstlisting}[language=c++]
+% vector<int> Merge(std::vector<int> lhs, std::vector<int> rhs) {
+%     std::vector<int> answer(lhs.size() + rhs.size());
+%     size_t lhs_index = 0;
+%     size_t rhs_index = 0;
+%     while (lhs_index != lhs.size() || rhs_index != rhs.size()) {
+%         if (lhs_index == lhs.size()) {
+%             answer[lhs_index + rhs_index] = rhs[rhs_index++];
+%         } else if (rhs_index == rhs.size()) {
+%             answer[lhs_index + rhs_index] = lhs[lhs_index++];
+%         } else {
+%             if (lhs[lhs_index] <= rhs[rhs_index]) {
+%                 answer[lhs_index + rhs_index] = lhs[lhs_index++];
+%             } else {
+%                 answer[lhs_index + rhs_index] = rhs[rhs_index++];
+%             }
+%         }
+%     }
+%     return answer;
+% }
+% // vec - [0, n)
+% std::vector<int> MergeSort(const std::vector<int>& vec, size_t left_index,
+% size_t right_index) {
+%     if (right_index - left_index == 1) {
+%         return {vec[left_index]};
+%     }
+%     size_t min_index = (right_index + left_index) / 2;
+%     auto sorted_segment_1 = MergeSort(vec, left_index, mid_index);
+%     auto sorted_segment_2 = MergeSort(vec, mid_index, right_index);
+%     return Merge(sorted_segment_1, sorted_segment_2);
+% }
+%     \end{lstlisting}
+% \end{implementation}
+
+% \subsection{Теорема о нижней границе времени работы сортировки}
+
+% \begin{theorem}{Нижняя оценка сортировки сравнениями}{}
+%   Сортировка, основанная на сравнениях, работает за $\Omega(N \log N)$.
+% \end{theorem}
+
+% \textbf{Доказательство:}
+
+% Необходимо найти единственную корректную перестановку среди их множества --- всего есть $O(n!)$.
+
+% Всё что мы можем сделать это сравнить два элемента и понять, нужно ли их переставить. Число перестановок, которые остаются к исследованию: $\frac{n!}{2}$.
+
+% Тогда $T(n) \geq \log(n!) = \Omega(n \log n)$.
+
+% \begin{theorem}{lemm о факториале}{}
+%   $\log N! = \Theta(N \log N)$
+% \end{theorem}
+
+% \textbf{Доказательство:}
+
+% По формуле Стирлинга:
+% \[
+%   \log N! \sim \log\sqrt{2\pi n} \left(\frac{n}{e}\right)^n = \frac{1}{2}\log(2\pi n) + n \log n - n \log e = \Theta(N \log N)
+% \]
+
+% \subsection{LSD и MSD}
+
+% \textbf{Идея:} Сортировки, основанные не на сравнениях. Вместо сравнения целых чисел, сортируем их по разрядам (цифрам).
+
+% \textbf{Сортировка подсчётом (Counting Sort):}
+
+% Пусть есть массив положительных чисел, элементы которого ограничены неким числом $K$. Почему бы просто не сосчитать какое значение вошло в него сколько раз? Затем выписать элементы по возрастанию нужное число раз!
+
+% Подводным камнем такой сортировки является отсутствие стабильности, но отчаиваться рано, ведь можно сделать эту сортировку стабильной.
+
+% \textbf{LSD (Least Significant Digit Sort):}
+
+% Поймем, что целое число это набор байт. Что будет, если сортировать от последнего разряда к первому? Тут важно заметить, что нам КРАЙНЕ важна стабильность сортировки --- без нее перемешаются старые результаты для менее значащих разрядов.
+
+% Время сортировки составляет $O(n + K)$, где $K$ --- макс. значение цифры в основании системы счисления, по которой число сортируется. Потребляемая доп. память составляет $O(n + K)$, поскольку нужен доп массив для совершения перестановки, и для хранения счетчиков.
+% \begin{implementation}{LSD}{}
+%   \begin{lstlisting}[language=c++]
+% void LSPSort(std::vector<int>& vec) {
+%     auto vec_copy = vec;
+%     int max_element = 0;
+%     for (size_t index = 0; index < vec.size(); ++index) {
+%         max_element = std::max(max_element, vec[index]);
+%     }
+%     int digit_number = 1;
+%     size_t max_length = to_string(max_element).size();
+%     for (size_t length = 0; length < max_length; ++length) {
+%         std::vector<int> count(10);
+%         for (size_t index = 0; index < vec.size(); ++index) {
+%             int digit = (vec[index] / digit_number) % 10;
+%             ++count[digit];
+%         }
+%         for (size_t index_count = 1; index_count < count.size();
+%         ++index_count) {
+%             count[index_count] += count[index_count - 1];
+%         }
+%         for (size_t index = count.size() - 1; index + 1 > 0; ++index) {
+%             int digit = (vec[index] / digit_number) % 10;
+%             vec_copy[count[digit] - 1] = vec[index];
+%             --count[digit];
+%         }
+%         vec = vec_copy;
+%         digit_number *= 10;
+%     }
+% }
+%     \end{lstlisting}
+% \end{implementation}
+
+
+% \textbf{MSD (Most Significant Digit Sort):}
+
+% А если пойти от самого значимого разряда? Тогда мы последними будем сортировать младшие разряды и результат для более важных разрядов может перемешаться...
+
+% Давайте после сортировки разряда рекурсивно вызывать сортировку для последовательностей элементов, которые оказались равными в текущем разряде. Можно сказать, что мы разбили элементы на корзины.
+
+% Такую сортировку часто называют «корзинной сортировкой». Алгоритм требует $O(n + k)$ памяти, и также $O(n + k)$ времени (в случае чисел). Можно также использовать для сортировки строк.
+
+% \begin{implementation}{MSD}{}
+%   \begin{lstlisting}[language=c++]
+% void MSDSort(std::vector<int>& vec) {
+%     int max_element = vec[0];
+%     for (size_t index = 0; index < vec.size(); ++index) {
+%         max_element = std::max(max_element, vec[index]);
+%     }
+%     int digit_number = 1;
+%     size_t max_size = std::to_string(max_element).size();
+%     for (size_t count = 0; count < max_size; ++count) {
+%         digit_number *= 10;
+%     }
+%     MSDSort(vec, digit_number, 0, vec.size());
+% }
+% void MSDSort(std::vector<int>& vec, int digit_number, size_t left_index,
+% size_t right_index) {
+%     if (right_index - left_index <= 1) {
+%         return;
+%     }
+%     std::vector<int> count(10);
+%     std::vector<int> vec_copy = vec;
+%     for (size_t index = left_index; index < right_index; ++index) {
+%         int digit = (vec[index] / digit_number) % 10;
+%         ++count[digit];
+%     }
+%     for (size_t index = 1; index < count.size(); ++index) {
+%         count[index] += count[index - 1];
+%     }
+%     std::vector<int> count_copy(11);
+%     for (size_t count_index = 0; count_index < count_copy.size();
+%     ++count_index){
+%         count_copy[count_index + 1] = count[count_index];
+%     }
+%     for (size_t index = left_index; index < right_index; ++index) {
+%         int digit = (vec[index] / digit_number) % 10;
+%         vec_copy[left_index + count[digit] - 1] = vec[index];
+%         --count[digit];
+%     }
+%     if (digit_number != 1) {
+%         digit_number /= 10;
+%         for (size_t count_index = 1; count_index < count_copy.size();
+%         ++count_index) {
+%             MSDSort(vec, digit_number, left_index + count_copy[count_index -
+%             1], left_index + count_copy[count_index]);
+%         }
+%     }
+% }
+%     \end{lstlisting}
+% \end{implementation}
+
+% \subsection{Быстрая сортировка. Разбиения: Ломуто, Хоара, Толстое. Среднее время работы}
+
+% \textbf{Алгоритм быстрой сортировки:}
+
+% \begin{enumerate}
+%   \item Как-нибудь выберем опорный элемент pivot (важно: значение должно присутствовать в массиве, например можно брать самый правый/самый левый/центральный).
+%   \item Разобьем массив на две части, в одной все элементы больше или равны pivot, в другой меньше.
+%   \item Поставим pivot на границе раздела (во избежание бесконечной рекурсии).
+%   \item Рекурсивно решим две образованные подзадачи (шаги 1-3).
+% \end{enumerate}
+
+% \textbf{Разбиение Ломуто:}
+
+% \begin{enumerate}
+%   \item Заведем два указателя $l, r$, изначально оба показывают на начало массива.
+%   \item Пойдем слева направо, $l$ -- будет показывать границу, до которой все элементы меньше опорного.
+%   \item Таким образом для разбиения хватит одного цикла.
+% \end{enumerate}
+% \begin{implementation}{Разбиение Ломуто}{}
+%   \begin{lstlisting}[language=C++]
+% int lomuto_partition(int* a, int l, int r) {
+%   int pivot = a[l + (r - l) / 2];
+%   swap(&a[r], &a[l + (r - l) / 2]);
+%   int i = l;
+%   for (int j = l; j <= r; ++j) {
+%     if (a[j] < pivot) {
+%       swap(&a[i++], &a[j]);
+%     }
+%   }
+%   swap(&a[i], &a[r]);
+%   return i;
+% }
+% \end{lstlisting}
+% \end{implementation}
+
+% \textbf{Разбиение Хоара:}
+
+% \begin{enumerate}
+%   \item Заведем два указателя $l, r$, левый начинает с начала, правый с конца.
+%   \item Устремим их на встречу друг другу.
+%   \item $r$ пропускает все элементы, которые $\geq$ pivot, $l$ -- все, которые меньше pivot. Когда оба находят элементы, стоящие не так, меняем местами $a_l$ и $a_r$.
+%   \item Когда $l, r$ встретятся -- мы получим необходимое разбиение.
+% \end{enumerate}
+% \begin{implementation}{Разбиение Xоара}{}
+%   \begin{lstlisting}[language=C++]
+% int hoar_partition(int* a, int l, int r) {
+%   int piv_idx = l + (r - l) / 2;
+%   int pivot = a[piv_idx];
+%   int i = l;
+%   int j = r;
+%   while (i <= j) {
+%     while (a[i] < pivot) { i++; }
+%     while (a[j] > pivot) { j--; }
+%     if (i >= j) {
+%       return j;
+%     }
+%     swap(&a[i++], &a[j--]);
+%   }
+%   return j;
+% }
+% \end{lstlisting}
+% \end{implementation}
+
+% \textbf{Хоар vs Ломуто:}
+
+% На практике разбиение Хоара обычно работает заметно быстрее, чем разбиение Ломуто. Интуитивно это можно объяснить тем, что при разбиении Хоара сначала меняются местами как можно более удаленные друг от друга элементы, благодаря чему в массиве быстрее уменьшается число инверсий. На просторах интернета я нашел оценку числа обменов, которая для Хоара в 3 раза меньше чем для Ломуто.
+
+% \textbf{Толстое разбиение (задача флага Нидерландов):}
+
+% Поскольку числа обладают свойством трихотомии, решение задачи флага Нидерландов можно применить к разбиению элементов на три группы: $<$ pivot, $=$ pivot, $>$ pivot.
+
+% \begin{enumerate}
+%   \item Заведем два указателя $l, \text{mid}, r$.
+%   \item $l = 0, r = n-1, \text{mid} = 0$
+%   \item Будем поддерживать инвариант: $\text{arr}[r \ldots n-1] >$ pivot, $\text{arr}[0 \ldots l] <$ pivot, $\text{arr}[l \ldots \text{mid}] ==$ pivot.
+% \end{enumerate}
+
+% \textbf{Стратегии выбора pivot:}
+
+% \begin{itemize}
+%   \item Неплохой стратегией является выбор случайного элемента.
+%   \item Также можно брать медиану трех случайных элементов (или даже 5-ти или 7-ми).
+%   \item Также существует детерминированный алгоритм (медиана медиан).
+% \end{itemize}
+
+% \textbf{Время работы:}
+
+% \begin{lemma}{Время работы быстрой сортировки}{}
+%   Пусть $X$ --- число сравнений, выполняемых за время работы сортировки над $n$-элементным массивом. Тогда время работы быстрой сортировки составляет $O(n + X)$.
+% \end{lemma}
+
+% \textbf{Доказательство:} Быстрая сортировка делает не более $n$ вызовов функции partition, который в свою очередь совершает некоторое количество итераций цикла, в каждой из которых происходит сравнение элементов с pivot.
+
+% \begin{lemma}{Среднее время работы}{}
+%   При случайном выборе pivot: $\mathbb{E}[X] = O(n \log n)$.
+% \end{lemma}
+
+% \subsection{k-ая порядковая статистика. Среднее время работы}
+
+% \begin{definition}{k-порядковая статистика}{}
+%   k-порядковая статистика --- это k-ый по величине элемент.
+% \end{definition}
+
+% \textbf{Алгоритм поиска:}
+
+% \begin{enumerate}
+%   \item Выбрать опорный элемент.
+%   \item Провести разбиение как в быстрой сортировке (любым методом, который нравится).
+%   \item Искать ответ только с той стороны, где будет наша статистика.
+% \end{enumerate}
+
+% \begin{lemma}{Время работы поиска k-ой статистики}{}
+%   Алгоритм в среднем работает за $O(n)$ (б/д).
+% \end{lemma}
+% \begin{implementation}{Поиск k-той порядковой статистики}{}
+%   \begin{lstlisting}[language=c++]
+% int find_kth(std::vector<int> vec, size_t k) {
+%     return find_kth(vec, 0, vec.size(), k);
+% }
+% int find_kth(std::vector<int>& vec, size_t left_index, 
+%              size_t right_index, size_t k) {
+%     if (left_index + 1 == right_index) {
+%         return vec[left_index];
+%     }
+%     int pivot = vec[left_index + (right_index - left_index) / 2];
+%     size_t index = left_index;
+%     size_t jndex = right_index - 1;
+%     while (index < jndex) {
+%         while (index < jndex && vec[index] < pivot) {
+%             ++index;
+%         }
+%         while (jndex > index && vec[jndex] >= pivot) {
+%             --jndex;
+%         }
+%         if (index == jndex) {
+%             break;
+%         }
+%         std::swap(vec[index], vec[jndex]);
+%     }
+%     if (index < k) {
+%         return find_kth(vec, index, right_index, k);
+%     }
+%     return find_kth(vec, left_index, index + 1, k);
+% }
+% \end{lstlisting}
+% \end{implementation}
+
+% \subsection{Медиана медиан как pivot. Время работы}
+
+% \textbf{Алгоритм (Блума-Флойда-Прата-Ривеста-Тарьяна):}
+
+% \begin{enumerate}
+%   \item Разобьем массив на пятерки элементов.
+%   \item В каждой пятерке выберем медиану. Получили массив медиан.
+%   \item Для массива медиан ищем медиану (с помощью алгоритма поиска k-порядковой статистики), и используем ее как опорный элемент.
+% \end{enumerate}
+
+% Обратите внимание, что в алгоритме используется взаимная рекурсия --- поиск медианы в массиве медиан, тоже будет использовать медиану медиан.
+
+% \begin{lemma}{Гарантия разбиения}{}
+%   Медиана медиан гарантированно делит массив в соотношении не хуже чем $3:7$.
+% \end{lemma}
+
+% \textbf{Доказательство:} Сначала определим нижнюю границу для количества элементов, превышающих по величине опорный элемент $x$. В общем случае как минимум половина медиан, найденных на втором шаге, больше или равны медианы медиан $x$. Таким образом, как минимум $\frac{N}{10}$ групп содержат по 3 элемента, превышающих величину $x$, за исключением группы, в которой меньше 5 элементов и ещё одной группы, содержащей сам элемент $x$. Таким образом получаем, что количество элементов больших $x$ не менее $\frac{3n}{10}$.
+
+% \begin{lemma}{Линейное время работы}{}
+%   Алгоритм нахождения k-й порядковой статистики с использованием медианы медиан работает за линейное время.
+% \end{lemma}
+
+% \textbf{Доказательство:} У нас есть три составляющих работы алгоритма на каждом шаге:
+% \begin{enumerate}
+%   \item Время на разделение массива на пятерки и их сортировка: $aN$
+%   \item Время на поиск медианы медиан $T(\frac{N}{5})$
+%   \item Время на поиск k-й порядковой не превзойдет времени его поиска в большей доле, то есть $T(\frac{7N}{10})$
+% \end{enumerate}
+
+% Таким образом, $T(N) \leq T(\frac{N}{5}) + T(\frac{7N}{10}) + aN$.
+
+% Пусть $T(N) \leq cN$ для некоторой $c$ и для любого $n$ до 140. Подставим это соотношение:
+% \[
+%   T(N) \leq T(\frac{N}{5}) + T(\frac{7N}{10}) + cN \leq \frac{cN}{5} + \frac{7 \cdot cN}{10} + aN = cN \cdot \frac{9}{10} + aN = cN + \left(-cN \cdot \frac{1}{10} + aN\right)
+% \]
+
+% Тогда неравенство $T(N) \leq cN$ верно, если взять $c \geq 10a$. Поскольку такое $c$ действительно можно выбрать, медиана медиан работает за линейное время.
+
+% \textbf{Применение:} Если использовать медиану медиан в качестве опорного элемента в быстрой сортировке, время работы сортировки будет $O(n \log N)$ в худшем случае.
+% \begin{implementation}{Поиск медианы за линию}{}
+%   \begin{lstlisting}[language=c++]
+% int MedianOfMedians(std::vector<int> vec) {
+%     return MedianOfMedians(vec, vec.size() / 2);
+% }
+% int MedianOfMedians(std::vector<int>& vec, size_t k) {
+%     if (vec.size() <= 5) {
+%         std::sort(vec.begin(), vec.end());
+%         return vec[k];
+%     }
+%     vector<int> medians;
+%     for (size_t index = 0; index < vec.size(); index += 5) {
+%         size_t last_index = std::min(vec.size(), index + 5);
+%         sort(vec.begin() + index, vec.begin() + last_index);
+%         medians.push_back(vec[(last_index + index) / 2]);
+%     }
+%     int median = MedianOfMedians(medians, medians.size() / 2);
+%     vector<int> less_median, greater_median;
+%     for (size_t index = 0; index < vec.size(); ++index) {
+%         if (vec[index] <= median) {
+%             less_median.push_back(vec[index]);
+%         } else {
+%             greater_median.push_back(vec[index]);
+%         }
+%     }
+%     if (less_median.size() < k) {
+%         return MedianOfMedians(greater_median, k - less_median.size());
+%     }
+%     return MedianOfMedians(less_median, k);
+% }
+% \end{lstlisting}
+% \end{implementation}
+% \subsection{Бинарная куча. Операции. Построение за O(n)}
+
+% \begin{definition}{АТД (абстрактный тип данных)}{}
+%   АТД --- интерфейс, набор операций над объектом.
+% \end{definition}
+
+% \begin{definition}{АТД очередь с приоритетом}{}
+%   АТД очередь с приоритетом --- абстрактный тип данных, поддерживающий две операции:
+%   \begin{itemize}
+%     \item Вставить элемент
+%     \item Извлечь максимум
+%   \end{itemize}
+% \end{definition}
+
+% \begin{definition}{Двоичная куча (пирамида)}{}
+%   Двоичная куча (пирамида) --- подвешенное бинарное дерево, обладающее следующими свойствами:
+%   \begin{itemize}
+%     \item Значение элемента в каждой вершине не меньше, чем значения в потомках.
+%     \item На i-ом (нумерация ведется с нуля) ярусе дерева, кроме быть может последнего --- $2^i$ вершин
+%     \item Последний слой заполнен слева направо
+%   \end{itemize}
+% \end{definition}
+
+% \textbf{Замечание:} При желании можно вместо бинарной пирамиды использовать k-ичную пирамиду (например тернарную). Это уменьшает число ярусов дерева, необходимых для хранения элементов. На основе бинарной пирамиды можно реализовать очередь с приоритетом.
+
+% \begin{lemma}{Высота бинарной кучи}{}
+%   Число ярусов (высота) бинарной кучи из $n$ элементов можно оценить, как $O(\log n)$.
+% \end{lemma}
+
+% \textbf{Доказательство:} Рассмотрим все ярусы кучи, без последнего. Тогда у нас имеется полная бинарная куча в которой $k < n$ элементов и ее высота на 1 меньше. У такой кучи каждый следующий ярус содержит в два раза больше элементов. Пусть высота этой кучи равна $h$. Тогда:
+% \[
+%   k = \sum_{i=0}^{h-1} 2^i = 2^h - 1
+% \]
+
+% Из этого следует, что $h \leq \log_2 k$. Поскольку исходная куча содержит на 1 ярус больше, ее высоту можно оценить как $O(\log n)$.
+
+% \textbf{Хранение в памяти:}
+
+% Хранить кучу удобно в массиве (используем 0-индексацию). Пусть мы рассматриваем элемент с индексом $i$:
+% \begin{itemize}
+%   \item Индекс левого ребенка: $2i + 1$
+%   \item Индекс правого ребенка: $2i + 2$
+%   \item Индекс родителя: $\lfloor \frac{i-1}{2} \rfloor$
+%   \item Элементы, которые являются листами, имеют индексы $\lceil \frac{n}{2} \rceil \ldots n-1$
+% \end{itemize}
+
+% \textbf{Операция Sift Up (Просеивание вверх):}
+
+% Сравним элемент с родительским элементом, если он меньше --- поменяем их местами. Продолжим выполнение операции до тех пор, пока родитель не окажется больше или равным значению нашего элемента, либо пока элемент не станет корнем.
+
+% \textbf{Операция Sift Down (Просеивание вниз):}
+
+% Сравним элемент с дочерними элементами, если один из них больше, чем этот элемент, поменяем местами с большим из дочерних элементов. Продолжим выполнение операции до тех пор, пока элемент не окажется больше всех детей или не окажется листом.
+
+% \textbf{Основные операции:}
+
+% \begin{enumerate}
+%   \item \textbf{Вставка:} Имеется куча (возможно, пустая), мы хотим добавить в нее элемент. Свойства кучи позволяют только добавить его на последний ярус. Такое добавление может нарушить свойства кучи: добавленный элемент может оказаться больше родителя. Исправить проблему возможно, если выполнить операцию SiftUp. Операция будет работать за $O(\log n)$.
+
+%   \item \textbf{Извлечение максимума:} Имеется непустая куча, хотим извлечь максимальный элемент. Исходя из свойств кучи максимум всегда находится в корне. Также согласно свойствам кучи (все ярусы кроме последнего должны быть заполнены), на место извлекаемого элемента необходимо что-то поставить. Для этого подойдет последний элемент последнего яруса, но он может оказаться меньше какого-либо из детей корня. Исправить проблему возможно, если выполнить операцию sift down. Операция будет работать за $O(\log n)$.
+
+%   \item \textbf{Increase/Decrease key:} Имея доступ к произвольному ключу можно поменять его значение. Операция будет работать за $O(\log n)$.
+% \end{enumerate}
+
+% \textbf{Построение кучи:}
+
+% Можно построить за $O(n \log n)$, просто сделав $n$ операций вставки. Можно сделать умнее (за $O(n)$). Давайте с поочередно от элемента с индексом $\frac{n}{2}$ до начала массива вызывать операцию SiftDown. Это будет работать, так как кучи из 1 вершины корректны, а далее мы восстанавливаем кучи из $k+1$ элемента и т. д.
+
+% \begin{theorem}{Построение кучи за O(n)}{}
+%   Построение бинарной кучи из $n$ элементов (методом, описанным выше) работает за $O(n)$.
+% \end{theorem}
+
+% \textbf{Доказательство:} Заметим, что на высоте $i$ (листья имеют высоту 1) число вершин не превосходит $\lceil \frac{n}{2^i} \rceil$. Одна операция SiftDown делает $2i$ сравнений, а также высота кучи не превосходит $\lceil \log n \rceil$. Тогда:
+% \[
+%   T(n) \leq \sum_{i=1}^{\lceil \log n \rceil} \frac{n}{2^i} \cdot 2i = 2n \sum_{i=1}^{\lceil \log n \rceil} \frac{i}{2^i}
+% \]
+
+% Отметим: $S = \sum_{i=1}^{\lceil \log n \rceil} \frac{i}{2^i}$. Имеем:
+% \[
+%   S = \sum_{i=1}^{\lceil \log n \rceil} \left( \frac{1}{2} *\frac{i-1}{2^{i-1}} + \frac{1}{2^i} \right) < \frac{1}{2} \cdot \sum_{i=1}^{\lceil \log n \rceil} \frac{i}{2^i} + 1 = \frac{1}{2}S + 1
+% \]
+
+% Тогда, $S < 2$, и в свою очередь: $T(n) \leq 4n = O(n)$.
+
+% \textbf{Слияние:} Для слияния двух куч сложим их элементы в один массив и построим кучу. Будет работать за $O(n)$.
+% \begin{implementation}{Реализация бинарной кучи}{}
+%   \begin{lstlisting}[language=c++]
+% struct Heap {
+%     public:
+%     Heap (const std::vector<int>& arr) : data_(arr) {
+%         for (size_t index = arr.size(); index + 1 > 0; ++index) {
+%             SiftDown(index);
+%         }
+%     }
+%     void Insert(const int& number) {
+%         data_.push_back(number);
+%         SiftUp(number);
+%     }
+%     int EraseMax() {
+%         std::swap(data_[0], data_.back());
+%         int answer = data_.back();
+%         data_.pop_back();
+%         SiftDown(0);
+%         return answer;
+%     }
+%     private:
+%     void SiftDown(size_t index) {
+%         if (((index + 1) << 1) >= data_.size()) {
+%             return;
+%         }
+%         size_t lchild = (index << 1) + 1;
+%         size_t rchild = (index << 1) + 2;
+%         if (data_[index] < data_[lchild]) {
+%             if (data_[index] < data_[rchild]) {
+%                 if (data_[lchild] < data_[rchild]) {
+%                     std::swap(data_[index], data_[rchild]);
+%                     SiftDown(rchild);
+%                 } else {
+%                     std::swap(data_[index], data_[lchild]);
+%                     SiftDown(lchild);
+%                 }
+%             } else {
+%             std::swap(data_[index], data_[lchild]);
+%             SiftDown(lchild);
+%             }
+%         } else if (data_[index] < data_[rchild]) {
+%             std::swap(data_[index], data_[rchild]);
+%             SiftDown(rchild);
+%         }
+%     }
+%     void SiftUp(size_t index) {
+%         if (index == 0) {
+%             return;
+%         }
+%         if (data_[index] > data_[((index - 1) >> 1)]) {
+%             std::swap(data_[index], data_[((index - 1) >> 1)]);
+%             SiftUp(((index - 1) >> 1));
+%         }
+%     }
+%     std::vector<int> data_;
+% };
+% \end{lstlisting}
+% \end{implementation}
+% \subsection{Пирамидальная сортировка}
+
+% \textbf{Алгоритм:}
+
+% \begin{enumerate}
+%   \item Хотим отсортировать массив $A$ по неубыванию.
+%   \item Построим бинарную кучу (на максимум) на основе массива $A$ (в самом массиве, т. е. inplace).
+%   \item Будем извлекать по очереди элементы пирамиды и ставить их в конец массива (это возможно, поскольку после извлечения из пирамиды в конце массива образуется неиспользованная ячейка).
+%   \item В итоге получим отсортированный массив.
+% \end{enumerate}
+
+% \textbf{Анализ:}
+
+% \begin{itemize}
+%   \item Время работы пирамидальной сортировки составляет $O(n \log n)$
+%   \item Потребление доп. памяти пирамидальной сортировки составляет $O(1)$ (если не использовать рекурсию для реализации кучи)
+%   \item Сортировка не является устойчивой.
+% \end{itemize}
+
+% Первое верно, так как извлечение из кучи составляет $O(\log n)$. Второе --- поскольку все операции можно без создания дополнительных массивов. Третье, поскольку в пирамиде равные элементы могут уйти в разные поддеревья пирамиды.
+
+% \textbf{Примечание:} Пирамида основана только на сравнениях $\Rightarrow$ сортировка тоже основана на сравнениях. Заметим, что она работает за $O(n \log n)$ даже в худшем случае.
+
+% \begin{implementation}{Heapsort}{}
+%   \begin{lstlisting}[language=c++]
+% void heapify(int arr[], int n, int i){
+%     int largest = i;
+%     int l = 2 * i + 1;
+%     int r = 2 * i + 2;
+%     if (l < n && arr[l] > arr[largest])
+%         largest = l;
+%     if (r < n && arr[r] > arr[largest])
+%         largest = r;
+%     if (largest != i) {
+%         swap(arr[i], arr[largest]);
+%         heapify(arr, n, largest);
+%     }
+% }
+
+% void heapSort(int arr[], int n) {
+%     for (int i = n / 2 - 1; i >= 0; i--)
+%         heapify(arr, n, i);
+%     for (int i = n - 1; i >= 0; i--) {
+%         swap(arr[0], arr[i]);
+%         heapify(arr, i, 0);
+%     }
+% }
+% \end{lstlisting}
+% \end{implementation}
+
+% \subsection{Introsort}
+
+% На практике обычно используют смешанные алгоритмы, один из которых сейчас будет представлен, такой подход позволяет «сгладить» недостатки одних сортировок преимуществами других.
+
+% \textbf{Проблемы:}
+
+% \begin{itemize}
+%   \item У быстрой сортировки есть проблемные случаи, когда рекурсия слишком глубока и когда она слишком долго работает.
+%   \item Квадратичные сортировки работают медленно, однако часто хорошо дружат с кешами и имеют малую константу исполнения.
+%   \item Сортировка пирамидой использует очень много обменов в памяти, и не сильно дружит с кешем.
+% \end{itemize}
+
+% Гениальное решение предложил Дэвид Мюссер в 1997 году --- почему бы их не объединить в «команду»?
+
+% \textbf{Алгоритм Introsort:}
+
+% \begin{enumerate}
+%   \item В качестве базовой используется быстрая сортировка.
+%   \item При достижении глубины рекурсии равной $\log n$ (при желании можно умножить на константу в большую или меньшую сторону) --- сортируем оставшуюся часть алгоритмом heapsort.
+%   \item Совсем маленькие блоки будем сортировать при помощи сортировки Шелла/Вставками (оптимальный размер блока тоже лучше подобрать экспериментально).
+% \end{enumerate}
+
+% Поскольку при достижении лимита рекурсии $O(\log n)$ мы переходим на сортировку кучей, алгоритм гарантированно работает за $O(n \log n)$.
+
+% % ==================== РАЗДЕЛ 6: АМОРТИЗАЦИЯ ====================
+% \newpage
+% \section{Вопрос 6}
+
+% \subsection{ Линейные контейнеры}
+
+% \begin{definition}{Динамически расширяющийся массив}{}
+%   Динамически расширяющийся массив --- массивоподобный абстрактный тип данных, предлагающий следующий интерфейс:
+%   \begin{itemize}
+%     \item push $n$ --- добавить значение $n$ в конец.
+%     \item pop --- удалить значение из конца массива.
+%     \item get $i$ --- получить i-й элемент массива.
+%   \end{itemize}
+% \end{definition}
+% \begin{implementation}{Динамически расширяющийся массив}{}
+%   \begin{lstlisting}[language=c++]
+% #include <vector>
+% std::vector<int> vector;
+% // vector.push_back(element) - add in end
+% // vector.pop_back() - remove last
+% // vector[index] - get elem
+% \end{lstlisting}
+% \end{implementation}
+
+% \subsection{Поддержка минимума на стеке и очереди}
+
+% \textbf{Циклический буфер:}
+
+% Это структура данных, использующая единственный буфер фиксированного размера таким образом, как будто бы после последнего элемента сразу же снова идет первый. С его помощью можно реализовать очередь на массиве. Так структура выйдет cache-friendly.
+
+% \begin{implementation}{Циклический буфер}{}
+%   \begin{lstlisting}[language=c++]
+% // second homework c++))
+% \end{lstlisting}
+% \end{implementation}
+
+% \textbf{Очередь на двух стеках:}
+
+% Задача. Дан стек в виде черного ящика. Надо соорудить очередь. Одного стека не хватит, воспользуемся двумя. Сделаем один стек на вход stack\_in и второй на выход stack\_out. В первый будем добавлять, а из второго --- извлекать. Если при извлечении stack\_out пуст, то перекидываем все элементы из stack\_in в stack\_out.
+
+% \textbf{Очередь с минимумом:}
+
+% Задача. Сделать очередь с поддержкой операции получения минимума в ней. Заведем очередь на двух стеках, поддерживающих минимум. Запрос минимума сводится к минимуму из минимумов в двух стеках.
+
+
+% \begin{algorithm}{Идея реализации}{}
+%   Сделаем стек на минимуме, но когда удаляем элемент, будем удалять тот, что
+%   лежит в обратном стеке. Если он пустой, по "перельём" все элементы из основного стека
+%   в обратный. В итоге они будут иметь обратный порядок и ударяя верхний элемент в
+%   обратном стеке мы фактически будем удалять нижний элемент в обычном стеке.
+% \end{algorithm}
+% \begin{implementation}{Минимум на очереди}{}
+%   \begin{lstlisting}[language=c++]
+% #include<stack>
+% struct MinQueue {
+% public:
+%     void Push(int element) {
+%         in_data.Push(element);
+%     }
+%     void Pop() {
+%         if (out_data_.Empty()) {
+%             while (!in_data_.Empty()) {
+%                 out_data_.Push(in_data_.Top());
+%             in_data_.Pop();
+%             }
+%         }
+%         if (out_data_.Empty()) {
+%             return;
+%         }
+%         out_data_.Pop();
+%     }
+%     int GetMin() {
+%         if (out_data_.Empty() && in_data_.Empty()) {
+%             return 0;
+%         }
+%         if (out_data.Empty()) {
+%             return in_data_.GetMin();
+%         }
+%         if (in_data_.Empty()) {
+%             return out_data_.GetMin();
+%         }
+%         return std::min(in_data_.GetMin(), out_data_.GetMin());
+%     }
+%     bool Empty() {
+%         return in_data.Empty() && out_data_.Empty();
+%     }
+% private:
+%     MinStack out_data_;
+%     MinStack in_data_;
+
+% }
+% \end{lstlisting}
+
+% \end{implementation}
+
+% \newpage
+% \section{Вопрос 7}
+% \subsection{Амортизационный анализ}
+
+% \subsection{Групповой анализ}
+
+% \begin{definition}{Групповой анализ}{}
+%   В ходе группового анализа исследователь показывает, что в наихудшем случае суммарное время выполнения последовательности всех $n$ операций равно $T(n)$. Поэтому в наихудшем случае средняя, или амортизированная, стоимость, приходящаяся на одну операцию, определяется соотношением $T(n)/n$.
+% \end{definition}
+
+% \textbf{Замечание:} Такая амортизированная стоимость применима ко всем операциям, даже если в последовательности имеется несколько разных их типов.
+
+% \subsection{Бухгалтерский учет}
+
+% \subsection{Метод потенциалов}
+
+% \section{Вопрос 8}
+
+% \subsection{RSQ — Range Sum Query}
+
+% \begin{task}{Range Sum Query (RSQ)}{}
+%   \textbf{Дано:} массив из $n$ элементов $A[0], A[1], \ldots, A[n-1]$.
+
+%   \textbf{Запрос:} найти сумму элементов на отрезке $[l, r]$:
+%   \[
+%     \text{RSQ}(l, r) = \sum_{i=l}^{r} A[i] = A[l] + A[l+1] + \ldots + A[r]
+%   \]
+% \end{task}
+
+% \textbf{Примеры:}
+% \begin{itemize}
+%   \item Массив: $[3, 1, 4, 1, 5, 9, 2, 6]$
+%   \item $\text{RSQ}(2, 5) = 4 + 1 + 5 + 9 = 19$
+%   \item $\text{RSQ}(0, 3) = 3 + 1 + 4 + 1 = 9$
+% \end{itemize}
+
+% \textbf{Применение:}
+% \begin{itemize}
+%   \item Вычисление суммы продаж за период
+%   \item Подсчёт количества элементов на отрезке
+%   \item Нахождение среднего значения на подмассиве
+% \end{itemize}
+
+% \subsection{RMQ — Range Minimum Query}
+
+% \begin{task}{Range Minimum Query (RMQ)}{}
+%   \textbf{Дано:} массив из $n$ элементов $A[0], A[1], \ldots, A[n-1]$.
+
+%   \textbf{Запрос:} найти минимальный элемент на отрезке $[l, r]$:
+%   \[
+%     \text{RMQ}(l, r) = \min_{i \in [l, r]} A[i] = \min(A[l], A[l+1], \ldots, A[r])
+%   \]
+% \end{task}
+
+% \textbf{Примеры:}
+% \begin{itemize}
+%   \item Массив: $[3, 1, 4, 1, 5, 9, 2, 6]$
+%   \item $\text{RMQ}(2, 5) = \min(4, 1, 5, 9) = 1$
+%   \item $\text{RMQ}(0, 3) = \min(3, 1, 4, 1) = 1$
+% \end{itemize}
+
+% \textbf{Вариации:}
+% \begin{itemize}
+%   \item \textbf{Range Maximum Query (RMaxQ):} найти максимум на отрезке
+%   \item \textbf{Range GCD Query:} найти НОД всех элементов на отрезке
+%   \item \textbf{Range Product Query:} найти произведение элементов на отрезке
+% \end{itemize}
+
+% \textbf{Применение:}
+% \begin{itemize}
+%   \item Нахождение минимальной/максимальной цены за период
+%   \item Поиск самого низкого/высокого уровня на графике
+%   \item Задачи об интервалах и их пересечениях
+% \end{itemize}
+
+% \subsection{Классификация по типу запросов}
+
+% \subsubsection{Static задачи}
+
+% \begin{definition}{Static (статические) задачи}{}
+%   В статических задачах массив \textbf{не изменяется} после построения структуры данных. Разрешены только \textbf{запросы чтения} (query), но не модификации.
+
+%   \textbf{Операции:}
+%   \begin{itemize}
+%     \item \textbf{Построение:} предобработка массива один раз
+%     \item \textbf{Query:} ответ на запрос о значении функции на отрезке
+%     \item \textbf{Модификации:} не поддерживаются
+%   \end{itemize}
+% \end{definition}
+
+% \textbf{Примеры static задач:}
+
+% \begin{enumerate}
+%   \item \textbf{Static RSQ:}
+%         \begin{itemize}
+%           \item Дан массив, нужно отвечать на запросы суммы на отрезке
+%           \item Массив не изменяется
+%           \item \textbf{Решение:} префиксные суммы за $O(n)$ построение, $O(1)$ запрос
+%         \end{itemize}
+
+%   \item \textbf{Static RMQ:}
+%         \begin{itemize}
+%           \item Дан массив, нужно отвечать на запросы минимума на отрезке
+%           \item Массив не изменяется
+%           \item \textbf{Решение:} Sparse Table за $O(n \log n)$ построение, $O(1)$ запрос
+%         \end{itemize}
+% \end{enumerate}
+
+% \textbf{Структуры данных для static задач:}
+% \begin{itemize}
+%   \item \textbf{Префиксные суммы} --- только для RSQ
+%   \item \textbf{Sparse Table} --- для идемпотентных операций (min, max, gcd)
+%   \item \textbf{Segment Tree} --- универсальное решение
+% \end{itemize}
+
+% \subsubsection{Dynamic задачи}
+
+% \begin{definition}{Dynamic (динамические) задачи}{}
+%   В динамических задачах массив \textbf{может изменяться}. Поддерживаются как \textbf{запросы чтения} (query), так и \textbf{запросы модификации} (update).
+
+%   \textbf{Операции:}
+%   \begin{itemize}
+%     \item \textbf{Query:} ответ на запрос о значении функции на отрезке
+%     \item \textbf{Point Update:} изменение одного элемента массива
+%     \item \textbf{Range Update:} изменение всех элементов на отрезке
+%   \end{itemize}
+% \end{definition}
+
+% \textbf{Примеры dynamic задач:}
+
+% \begin{enumerate}
+%   \item \textbf{Dynamic RSQ с Point Update:}
+%         \begin{itemize}
+%           \item Дан массив
+%           \item \textbf{Query:} найти сумму на отрезке $[l, r]$
+%           \item \textbf{Update:} изменить элемент $A[i]$ на новое значение
+%           \item \textbf{Решение:} Segment Tree или Fenwick Tree за $O(\log n)$ на операцию
+%         \end{itemize}
+
+%   \item \textbf{Dynamic RMQ с Point Update:}
+%         \begin{itemize}
+%           \item Дан массив
+%           \item \textbf{Query:} найти минимум на отрезке $[l, r]$
+%           \item \textbf{Update:} изменить элемент $A[i]$ на новое значение
+%           \item \textbf{Решение:} Segment Tree за $O(\log n)$ на операцию
+%         \end{itemize}
+
+%   \item \textbf{Dynamic RSQ с Range Update:}
+%         \begin{itemize}
+%           \item Дан массив
+%           \item \textbf{Query:} найти сумму на отрезке $[l, r]$
+%           \item \textbf{Update:} добавить значение $\delta$ ко всем элементам на отрезке $[l, r]$
+%           \item \textbf{Решение:} Segment Tree с ленивым распространением (lazy propagation)
+%         \end{itemize}
+% \end{enumerate}
+
+% \textbf{Типы обновлений:}
+
+% \begin{itemize}
+%   \item \textbf{Point Update:} $A[i] := \text{value}$ или $A[i] := A[i] + \delta$
+%   \item \textbf{Range Update:} $\forall j \in [l, r] : A[j] := A[j] + \delta$
+%   \item \textbf{Range Assignment:} $\forall j \in [l, r] : A[j] := \text{value}$
+% \end{itemize}
+
+% \textbf{Структуры данных для dynamic задач:}
+% \begin{itemize}
+%   \item \textbf{Fenwick Tree (BIT)} --- только для сумм, простая реализация
+%   \item \textbf{Segment Tree} --- универсальное решение для любых ассоциативных операций
+%   \item \textbf{Segment Tree с Lazy Propagation} --- для групповых обновлений на отрезках
+%   \item \textbf{SQRT-декомпозиция} --- простое решение за $O(\sqrt{n})$
+% \end{itemize}
+
+% \subsection{Классификация по порядку запросов}
+
+% \subsubsection{Online задачи}
+
+% \begin{definition}{Online (онлайн) задачи}{}
+%   В онлайн-задачах запросы приходят \textbf{последовательно}, и на каждый запрос нужно ответить \textbf{немедленно}, до получения следующего запроса.
+
+%   \textbf{Особенности:}
+%   \begin{itemize}
+%     \item Следующий запрос может зависеть от ответа на текущий
+%     \item Нельзя переупорядочить запросы
+%     \item Нужна быстрая структура данных
+%   \end{itemize}
+% \end{definition}
+
+% \textbf{Пример онлайн-задачи:}
+
+% \begin{verbatim}
+% Даны:
+% - Массив A[0..n-1]
+% - m запросов, которые приходят по одному
+
+% Для каждого запроса (l, r):
+% 1. Вычислить sum(l, r)
+% 2. Вывести ответ
+% 3. Получить следующий запрос (возможно зависящий от ответа)
+% \end{verbatim}
+
+% \textbf{Интерактивный пример:}
+% \begin{verbatim}
+% Запрос 1: sum(0, 3) → ответ: 15
+% Запрос 2: sum(1, answer_1 % 5) → sum(1, 0) → ответ: 1
+% Запрос 3: sum(answer_2, 7) → sum(1, 7) → ответ: 42
+% \end{verbatim}
+
+% \textbf{Требования к решению:}
+% \begin{itemize}
+%   \item Быстрая обработка каждого запроса
+%   \item Типично: $O(\log n)$ на запрос
+%   \item Можно использовать предподсчёт
+% \end{itemize}
+
+% \textbf{Подходящие структуры:}
+% \begin{itemize}
+%   \item Segment Tree
+%   \item Sparse Table (для static)
+%   \item Fenwick Tree
+%   \item Префиксные суммы (для static RSQ)
+% \end{itemize}
+
+% \subsubsection{Offline задачи}
+
+% \begin{definition}{Offline (оффлайн) задачи}{}
+%   В оффлайн-задачах \textbf{все запросы известны заранее}. Можно:
+%   \begin{itemize}
+%     \item Переупорядочить запросы оптимальным образом
+%     \item Использовать специальные алгоритмы
+%     \item Обработать запросы пакетно
+%   \end{itemize}
+% \end{definition}
+
+% \textbf{Пример оффлайн-задачи:}
+
+% \begin{verbatim}
+% Даны:
+% - Массив A[0..n-1]
+% - m запросов (l_1, r_1), (l_2, r_2), ..., (l_m, r_m)
+
+% Задача:
+% - Ответить на все запросы
+% - Порядок ответов не важен (или можно восстановить)
+% \end{verbatim}
+
+% \textbf{Преимущества оффлайн-подхода:}
+
+% \begin{enumerate}
+%   \item \textbf{Оптимизация порядка:}
+%         \begin{itemize}
+%           \item Сортировка запросов по левой границе
+%           \item Сортировка запросов по правой границе
+%           \item Группировка похожих запросов
+%         \end{itemize}
+
+%   \item \textbf{Алгоритм Мо (Mo's Algorithm):}
+%         \begin{itemize}
+%           \item Разбиение на блоки размера $\sqrt{n}$
+%           \item Специальная сортировка запросов
+%           \item Время: $O((n + m) \sqrt{n})$
+%         \end{itemize}
+
+%   \item \textbf{Метод параллельного бинпоиска:}
+%         \begin{itemize}
+%           \item Обработка нескольких запросов одновременно
+%           \item Использование монотонности
+%         \end{itemize}
+% \end{enumerate}
+
+% \textbf{Пример: Алгоритм Мо для RSQ}
+
+% \begin{verbatim}
+% Идея:
+% 1. Разбить массив на блоки размера sqrt(n)
+% 2. Сортировать запросы:
+%    - Сначала по номеру блока левой границы
+%    - Затем по правой границе
+% 3. Поддерживать текущий отрезок [L, R] и сумму на нём
+% 4. Для каждого запроса (l, r):
+%    - Двигать L и R, пока не получим [l, r]
+%    - Обновлять сумму при каждом шаге
+% \end{verbatim}
+
+% \textbf{Когда использовать offline:}
+% \begin{itemize}
+%   \item Все запросы известны заранее
+%   \item Сложная операция, которую нельзя эффективно делать online
+%   \item Нужна асимптотически лучшая сложность
+% \end{itemize}
+
+
+% \section{Вопрос 9}
+
+% \subsection{Разреженная таблица (Sparse Table)}
+
+% \begin{definition}{Разреженная таблица}{}
+%   Разреженная таблица или Sparse Table --- двумерная структура данных $ST[i][j]$, построенная на бинарной операции $F$, для которой выполнено следующее:
+%   \[
+%     ST[i][j] = F(A[i], A[i+1], \ldots, A[i + 2^j - 1]), \quad j \in [0 \ldots \log_2 N]
+%   \]
+% \end{definition}
+
+% \textbf{Построение:}
+
+% Простой метод построения таблицы заключён в следующем рекуррентном соотношении:
+% \[
+%   ST[i][j] = \begin{cases}
+%     F(ST[i][j-1], ST[i + 2^{j-1}][j-1]), & \text{если } j > 0; \\
+%     A[i],                                & \text{если } j = 0;
+%   \end{cases}
+% \]
+
+% По факту нужно просто заполнить массив!
+
+% \textbf{Примечание:} Для лучшей работы кешей лучше хранить матрицу у которой мало длинных строк (тогда для ответа на запрос будут браться значения из одного массива).
+
+% \textbf{Ответ на запрос:}
+
+% Заметим, что в этой таблице хранятся результаты функции $F$ на всех отрезках, длины которых равны степеням двойки. Выполним сначала предподсчет, суть которого в вычислении массива $\text{fl\_log}[j] = \lfloor \log_2 j \rfloor$. Теперь заметим, что для отрезка $[l, r]$ верно, что
+% \[
+%   F(A[l], A[l+1], \ldots, A[r]) = F(ST[l][j], ST[r - 2^j + 1][j]),
+% \]
+% где $j = \text{fl\_log}[r - l + 1]$.
+
+% \textbf{Ресурсы:}
+
+% \begin{itemize}
+%   \item В таблице хранятся результаты функции $F$ на всех отрезках, длины которых равны степеням двойки. Однако для каждого $j \in [0 \ldots \log_2 N]$ таких отрезков не более $N$, откуда потребляемая память составит $O(N \log N)$.
+%   \item Время построения. Заметим, что каждая ячейка пересчитывается за $O(1)$, откуда время построения $O(N \log N)$.
+%   \item И последнее --- ответ на запрос. Заметим, что это всего лишь вычисление функции от двух значений, что работает за $O(1)$.
+% \end{itemize}
+
+% \textbf{Требования к F:}
+
+% Операция $F$ должна быть:
+% \begin{itemize}
+%   \item Идемпотентна
+%   \item Ассоциативна
+%   \item Коммутативна
+% \end{itemize}
+
+% \begin{definition}{Идемпотентность}{}
+%   Операция $f$ идемпотентна, если $\forall a : f(a, a) = a$.
+% \end{definition}
+
+% \textbf{Задача:}
+% Есть массив из n элементов и q запросов типа findmin(l, r). Найти минимум на отрезке [l,
+% r].
+% \begin{algorithm}{Идея}{}
+%   Мы можем выбрать такую степень двойки k, что отрезок [l, r] можно покрыть двумя
+%   (возможно пересекающимися) отрезками длины 2k. Предподсчитаем ответ для всех
+%   отрезков длины 2i $\forall$i $\in$ [0
+%       , 1, … , log n]. Предпосчёт будет работать за O(nlog n). А на ответ
+%   мы можем тратить O(1), предпосчитав логарифмы для всех чисел 1...n.
+% \end{algorithm}
+% \begin{implementation}{Решение задачи}{}
+%   \begin{lstlisting}[language=c++]
+% #include <vector>
+% struct SparseTable {
+% public:
+%     SparseTable(const std::vector<int>& arr) {
+%         size_ = arr.size();
+%         logs_.resize(size_ + 1);
+%         if (size_ >= 2) {
+%         logs_[2] = 1;
+%         size_t index = 2;
+%         while ((index << 1) <= size_) {
+%             index <<= 1;
+%             logs_[index] = logs_[(index >> 1)] + 1;
+%         }
+%         for (index = 3; index <= size_; ++index) {
+%             if (logs_[index] == 0) {
+%                 logs_[index] = logs_[index - 1];
+%             }
+%         }
+%         } else {
+%         return;
+%         }
+%         size_log_ = logs.back() + 1;
+%         data_.resize(size_log_, std::vector<int> (size_));
+%         for (size_t index = 0; index < size_; ++index) {
+%             data_[0][index] = arr[index];
+%         }
+%         for (size_t log = 1; log < size_log_; ++log) {
+%             for (size_t index = 0; index < size_ - (1 << log) + 1; ++index) {
+%                 data_[log][index] = std::min(data_[log - 1][index],
+%                 data_[log - 1][index + (1 << (log - 1))]);
+%             }
+%         }
+%     }
+%     int GetMin(int left_index, int right_index) { // [l, r]
+%         size_t length = (right_index - left_index + 1);
+%         size_t length_log = logs_[length];
+%         return std::min(data_[length_log][left_index],
+%                         data_[length_log][right_index - (1 << length_log) + 1]);
+%     }
+% private:
+%     size_t size_;
+%     size_t size_log_;
+%     std::vector<int> logs_;
+%     std::vector<std::vector<int>> data_;
+% }
+% \end{lstlisting}
+% \end{implementation}
+
+% \subsection{Дерево отрезков (Segment Tree)}
+
+% \begin{definition}{Дерево отрезков}{}
+%   Дерево отрезков способно за $O(\log N)$ получать на подотрезке результат любой операции, которая:
+%   \begin{itemize}
+%     \item Ассоциативна ($\text{op}(\text{op}(a,b),c) = \text{op}(a,\text{op}(b,c))$)
+%     \item Коммутативна ($\text{op}(a,b) = \text{op}(b,a)$)
+%     \item Имеет нейтральный элемент ($0 : \text{op}(a,0) = a$)
+%   \end{itemize}
+%   Также возможны разные модификации.
+% \end{definition}
+
+% \textbf{Замечание:} Задачи RSQ/RMQ (Range sum query/range minimum query), как правило, решается с использованием этой структуры данных.
+
+% \textbf{Структура:}
+
+% Рассмотрим для суммы:
+% \begin{itemize}
+%   \item Корень содержит сумму всего массива.
+%   \item Левый ребенок --- сумму первой половины элементов.
+%   \item Правый ребенок --- сумму второй половины.
+%   \item Далее аналогично бьем пополам детей.
+% \end{itemize}
+
+% \textbf{Построение:}
+
+% Опишем нерекурсивное построение дерева на массиве длины $N$:
+% \begin{enumerate}
+%   \item Будем считать, что $\log_2 N \in \mathbb{N}$, иначе дозаполним до степени двойки нейтральными элементами.
+%   \item Заведем массив длины $2N - 1$, последние $N$ элементов будут элементами исходного массива.
+%   \item Первые $N-1$ элементов заполним следующим образом: $t[i] = F(t[2i+1], t[2i+2])$ (заполнение от элемента с номером $N-2$ и до 0 в цикле).
+% \end{enumerate}
+
+% \textbf{Ответ на запрос:}
+
+% Наша цель --- получить результат операции на отрезке. Пусть мы находимся в узле, отвечающего за подотрезок $[l, r]$, а изначальный запрос был $[L, R]$:
+% \begin{enumerate}
+%   \item Если $[l, r] \cap [L, R] = \emptyset$, то вернем нейтральный элемент.
+%   \item Если $[l, r] \subseteq [L, R]$, то вернем значение в узле.
+%   \item Иначе вернем результат операции с детей.
+% \end{enumerate}
+
+% То есть исходный отрезок разбивается на дизъюнктное объединение подотрезков.
+
+% \textbf{Время работы:}
+
+% Заметим, что на каждом уровне раскрываться вниз могут не более двух узлов, так как только крайние могут порождать дочерние запросы. Следовательно, время работы $O(\log N)$.
+
+% \textbf{Обновление по индексу:}
+
+% Пусть необходимо обновить элемент с индексом $i$, тогда:
+% \begin{enumerate}
+%   \item Найдем в дереве лист, отвечающий за $i$-й элемент. Это $(N-1+i)$-й.
+%   \item Индекс родителя: $\lfloor \frac{i-1}{2} \rfloor$.
+%   \item Обновляем значение в родителе через результаты на деревьях.
+%   \item Повтори, пока не обновил корень.
+% \end{enumerate}
+
+% Время: $O(\log N)$.
+
+% \textbf{Задача}
+% Дан массив длины n. И 2 типа запросов:
+% \begin{enumerate}
+%   \item Прибавить x на отрезке [l, r]
+%   \item Узнать сумму элементов на отрезке [l, r]
+% \end{enumerate}
+% \begin{algorithm}{Реализация решения}{}
+%   \begin{lstlisting}[language=c++]
+% #include <vector>
+
+% struct SegmentTree {
+% public:
+
+%   SegmentTree(cosnt std::vector<int> &arr) {
+%     size_ = arr.size();
+%     data_.resize((size_ << 2));
+%     Build(1, 0, size_, arr);
+%   }
+
+%   void Build(size_t index, size_t left_index, size_t right_index, const std::vector<int>& arr) {
+%     if (right_index - left_index == 1) {
+%       data_[index].value = arr[left_index];
+%       return;
+%     }
+%     size_t mid_index = left_index + (right_index - left_index) / 2;
+%     Build((index << 1), left_index, mid_index, arr);
+%     Build((index << 1) + 1, mid_index, right_index, arr);
+%     data_[index].value = data_[(index << 1)].value + data_[(index << 1) + 1].value;
+%   }
+
+%   void Push(size_t index, size_t left_index, size_t right_index) {
+%     data_[index].value += data_[index].push * (right_index - left_index);
+%     if (right_index - left_index > 1) {
+%       data_[(index << 1)].push += data_[index].push;
+%       data_[(index << 1) + 1].push += data_[index].push;
+%     }
+%     data_[index].push = 0;
+%   }
+
+%   void Update(size_t Left_index, size_t Right_index, int delta) { // [l, r]
+%     Update(1, 0, size_, Left_index, Right_index + 1, delta);
+%   }
+
+%   void Update(size_t index, size_t left_index, size_t right_index, size_t Left_index, size_t Right_index, int delta) {
+%     Push(index, left_index, right_index);
+%     if (Left_index <= left_index && right_index <= Right_index) {
+%       data_[index].push += delta;
+%       Push(index, left_index, right_index);
+%       return;
+%     }
+%     if (Left_index >= right_index || left_index >= Right_index) {
+%       return;
+%     }
+%     size_t mid_index = left_index + (right_index - left_index) / 2;
+%     Update((index << 1), left_index, mid_index, Left_index, Right_index, delta);
+%     Update((index << 1) + 1, mid_index, right_index, Left_index, Right_index, delta);
+%     data_[index].value = data_[(index << 1)].value + data_[(index << 1) + 1].value;
+%   }
+
+%   int Get(size_t Left_index, size_t Right_index){ // [l, r]
+%     return Get(1, 0, size_, Left_index, Right_index + 1);
+%   }
+
+%   int Get(size_t index, size_t left_inde, size_t right_index, size_t Left_index, size_t Right_index) {
+%     Push(index, left_index, right_index);
+%     if (Left_index <= left_index && right_index <= Right_index) {
+%       return data_[index].value;
+%     }
+%     if (Left_index >= right_index || left_index >= Right_index) {
+%       return 0;
+%     }
+%     size_t mid_index = left_index + (right_index - left_index) / 2;
+%     return Get((index << 1), left_index, mid_index, Left_index, Right_index) +            Get((index << 1) + 1, mid_index, right_index, Left_index, Right_index);
+%   }
+% \end{lstlisting}
+% \end{algorithm}
+% \begin{algorithm}{Приватные поля}{}
+%   \begin{lstlisting}[language=c++]
+% private:
+%   struct Node {
+%     int value = 0;
+%     int push = 0;
+%   }
+%   std::vector<Node> data_;
+%   size_t size_;
+% }
+% \end{lstlisting}
+% \end{algorithm}
+
+\clearpage
+\section{Дополнительные знания, не требуемые для сдачи экзамена}
+\subsection{Мастер-теорема о рекурсии}
+\begin{theorem}{Мастер-теорема о рекурсии}{}
+  Имеется рекуррентное соотношение:
+  \[
+    T(n) = a \cdot T\left(\frac{n}{b}\right) + n^c, \quad \text{где } a \geq 1, b > 1
+  \]
+  Тогда:
+  \[
+    T(n) = \begin{cases}
+      \Theta(n^{\log_b a}), & \text{если } a > b^c \\
+      \Theta(n^c \log n),   & \text{если } a = b^c \\
+      \Theta(n^c),          & \text{если } a < b^c
+    \end{cases}
+  \]
+\end{theorem}
+\textbf{Доказательство (схема):}
+Раскроем рекурренту:
+\begin{align*}
+  T(n) & = n^c + a \cdot T(n/b)                                                        \\
+       & = n^c + a \cdot (n/b)^c + a^2 \cdot (n/b^2)^c + \ldots                        \\
+       & = n^c \left(1 + \frac{a}{b^c} + \left(\frac{a}{b^c}\right)^2 + \ldots \right) \\
+       & = n^c (1 + q + q^2 + \ldots), \quad \text{где } q = \frac{a}{b^c}
+\end{align*}
+Количество членов: $k = \Theta(\log n)$.
+\begin{itemize}
+  \item Если $q = 1$ (т.е. $a = b^c$): $S(q) = k + 1 = \Theta(\log n) \Rightarrow T(n) = \Theta(n^c \log n)$
+  \item Если $q < 1$ (т.е. $a < b^c$): бесконечно убывающая геометрическая прогрессия, $T(n) = \Theta(n^c)$
+  \item Если $q > 1$ (т.е. $a > b^c$): $S(q) = \Theta(q^k) = \Theta\left(\left(\frac{a}{b^c}\right)^{\log n}\right) = \Theta(n^{\log_b a})$
+\end{itemize}
+
+\subsection{Доказательство основной теоремы алгоритма Евклида}
+
+\textbf{Доказательство:}
+
+Пусть $(a, b) = k$, тогда и $a$ и $bq$ делятся на $k$, следовательно, $r = a - bq$ тоже делится на $k$.
+
+С другой стороны, пусть $(b, r) = k_1$, тогда $a = bq + r$ делится на $k_1$.
+
+Предположим, что $k_1 > k$ (или $k_1 < k$), но в силу того что $k$ (и $k_1$) --- НОД, получим противоречие, тогда $k = k_1$.
+
+\end{document}
