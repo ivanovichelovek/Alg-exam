@@ -488,10 +488,10 @@ std::vector<int> factorization(int number) {
 \begin{implementation}{Решето Эратосфена}{}
   \begin{lstlisting}[language=C++]
   std::vector<int> Erat(int num) {
-    std::vector<int> erat(n + 1, 0);
+    std::vector<int> erat(num + 1, 0);
     for (int index = 2; index * index <= num; ++index) {
       if (!erat[index]) {
-        for (int index1=index * index; index1 <= n; index1 += index) {
+        for (int index1=index * index; index1 <= num; index1 += index) {
           erat[index1] = 1;
         }
       }
@@ -517,16 +517,16 @@ std::vector<int> factorization(int number) {
 
 \begin{implementation}{Решето Эратосфена}{}
   \begin{lstlisting}[language=C++]
-std::vector<int> Erat(int n) {
-    std::vector<int> erat(n + 1, 0);
+std::vector<int> Erat(int num) {
+    std::vector<int> erat(num + 1, 0);
     std::vector<int> primes;
-    for (size_t index = 2; index <= n; ++index) {
+    for (size_t index = 2; index <= num; ++index) {
     if (erat[index] == 0) {
         primes.push_back(index);
         erat[index] = index;
     }
     for (size_t jndex = 0; jndex <       primes.size() && primes[jndex] <
-        erat[jndex] && index * primes[jndex] <= n; ++jndex) {
+        erat[jndex] && index * primes[jndex] <= num; ++jndex) {
         erat[index * primes[jndex]] = primes[jndex];
     }
     }
@@ -867,56 +867,182 @@ struct list {
   Дек --- АТД, который представляет из себя двустороннюю очередь, то есть можно вставлять/удалять в начало/конец.
 \end{definition}
 
+\begin{task}{Дек через списки}{}
+  \textbf{Идея:} Дек можно реализовать с помощью двусвязного списка с операциями добавления в начало/конец и удаления из начала/конца. Однако при такой реализации обращение к элементу дека будет работать за $O(n)$, что подходит под требования, написанные в определении, однако это нас не устраивает, поэтому дек можно реализовать с помощью циклического буффера.
+\end{task}
+
+\begin{task}{Дек через циклический буффер}{}
+  \textbf{Идея:} Будем заполнять циклический буффер, пока есть место, если место закончилось и мы хотим добавить элемент, расширим capacity в два рада (по аналогии с динамическим массовом), и продолжим заполнение. Для лучшего понимания см. реализоцию
+\end{task}
+
+\begin{implementation}{Дек на циклическом буффере}{}
+\begin{lstlisting}[language=c++]
+  struct RingBuffer{
+  void reserve(int new_cap) {
+    if (new_cap <= capacity) {
+      return;
+    }
+    int* tmp = new int[new_cap];
+    for (int index = 0; index < size; ++index) {
+      tmp[index] = data[(begin + index) % capacity];
+    }
+    delete[] data;
+    begin = 0;
+    capacity = new_cap;
+    data = tmp;
+  }
+
+  void push_back(int elem) {
+    if (size == capacity) {
+      reserve(capacity * 2);
+    }
+    data[(begin + size) % capacity] = elem;
+    ++size;
+  }
+
+  void push_front(int elem) {
+    if (size == capacity) {
+      reserve(capacity * 2);
+    }
+    begin = (begin + capacity - 1) % capacity;
+    data[begin] = elem;
+    ++size;
+  }
+
+  void pop_back() {
+    if (size == 0) {
+      return;
+    }
+    --size;
+  }
+
+  void pop_front() {
+    if (size == 0) {
+      return;
+    }
+    --size;
+    begin = (begin + 1) % capacity;
+  }
+
+  int size = 0;
+  int begin = 0;
+  int capacity = 1;
+  int* data = new int[1];
+};
+\end{lstlisting}
+\end{implementation}
+
 \clearpage
 \section{Линейные контейнеры. Очередь с поддержкой произвольной ассоциативной операции}
 
-% \textbf{Стек с произвольной ассоциативной операцией:}
+\subsection{Стек с поддержкой минимума}
 
-% Давайте добавим к интерфейсу стека еще возможность возвращать минимум в нем. Будем хранить в узле стека не только сам элемент, но еще и минимум в стеке. При добавлении нового элемента в стек $S$ для получения стека $S'$ будем в голову $S'$ добавлять минимум как минимум из значения элемента и значения минимума в голове $S'$.
-% \begin{algorithm}{Идея реализации}{}
-%   Будем просто поддерживать стек, в котором первым элементом хранить сам
-%   элемент, а вторым - текущий минимум. При добавлении элемента новым минимумом
-%   будет или он или предыдущий элемент. Так как у нас есть доступ только к верхнему
-%   элементу, остальные минимумы пересчитывать не надо
-% \end{algorithm}
-% \begin{implementation}{Минимум на стеке}{}
-%   \begin{lstlisting}[language=c++]
-% #include <stack>
+Давайте добавим к интерфейсу стека еще возможность возвращать минимум в нем. Будем хранить в узле стека не только сам элемент, но еще и минимум в стеке. При добавлении нового элемента в стек $S$ для получения стека $S'$ будем в голову $S'$ добавлять минимум как минимум из значения элемента и значения минимума в голове $S'$.
+\begin{algorithm}{Идея реализации}{}
+  Будем просто поддерживать стек, в котором первым элементом хранить сам
+  элемент, а вторым - текущий минимум. При добавлении элемента новым минимумом
+  будет или он или предыдущий элемент. Так как у нас есть доступ только к верхнему
+  элементу, остальные минимумы пересчитывать не надо
+\end{algorithm}
+\begin{implementation}{Минимум на стеке}{}
+  \begin{lstlisting}[language=c++]
+#include <stack>
 
-% template<typename Operation>
-% struct MinStack {
-% public:
-%     void Push(int element) {
-%         int oper_element = (data_.empty() ? element :
-%         operation_(data_.top().second, element));
-%         data_.push({element, oper_element});
-%     }
-%     void Pop() {
-%         if (!data_.empty()) {
-%             data_.pop();
-%         }
-%     }
-%     int Top() {
-%         if (data_.empty()) {
-%             return -1;
-%         }
-%         return data_.top().first;
-%     }
-%     int Get() {
-%         if (data_.empty()) {
-%             return -1;
-%     }
-%         return data_.top().second;
-%     }
-%     bool Empty() {
-%         return data_.empty();
-%     }
-% private:
-%     std::stack<std::pair<int,int>> data_;
-%     Operation operation_{};
-% }
-% \end{lstlisting}
-% \end{implementation}
+struct MinStack {
+public:
+    void Push(int element) {
+        int min_element = (data_.empty() ? element :
+        std::min(data_.top().second, element));
+        data_.push({element, oper_element});
+    }
+    void Pop() {
+        if (!data_.empty()) {
+            data_.pop();
+        }
+    }
+    int Top() {
+        if (data_.empty()) {
+            return -1;
+        }
+        return data_.top().first;
+    }
+    int Get() {
+        if (data_.empty()) {
+            return -1;
+    }
+        return data_.top().second;
+    }
+    bool Empty() {
+        return data_.empty();
+    }
+private:
+    std::stack<std::pair<int,int>> data_;
+}
+\end{lstlisting}
+\end{implementation}
+
+\subsection{Очередь на двух стеках:}
+
+Задача. Дан стек в виде черного ящика. Надо соорудить очередь. Одного стека не хватит, воспользуемся двумя. Сделаем один стек на вход stack\_in и второй на выход stack\_out. В первый будем добавлять, а из второго --- извлекать. Если при извлечении stack\_out пуст, то перекидываем все элементы из stack\_in в stack\_out.
+
+\subsection{Очередь с минимумом:}
+
+Задача. Сделать очередь с поддержкой операции получения минимума в ней. Заведем очередь на двух стеках, поддерживающих минимум. Запрос минимума сводится к минимуму из минимумов в двух стеках.
+
+
+\begin{algorithm}{Идея реализации}{}
+  Сделаем стек на минимуме, но когда удаляем элемент, будем удалять тот, что
+  лежит в обратном стеке. Если он пустой, по "перельём" все элементы из основного стека
+  в обратный. В итоге они будут иметь обратный порядок и ударяя верхний элемент в
+  обратном стеке мы фактически будем удалять нижний элемент в обычном стеке.
+\end{algorithm}
+\begin{implementation}{Минимум на очереди}{}
+  \begin{lstlisting}[language=c++]
+#include<stack>
+struct MinQueue {
+public:
+    void Push(int element) {
+        in_data.Push(element);
+    }
+    void Pop() {
+        if (out_data_.Empty()) {
+            while (!in_data_.Empty()) {
+                out_data_.Push(in_data_.Top());
+            in_data_.Pop();
+            }
+        }
+        if (out_data_.Empty()) {
+            return;
+        }
+        out_data_.Pop();
+    }
+    int GetMin() {
+        if (out_data_.Empty() && in_data_.Empty()) {
+            return 0;
+        }
+        if (out_data.Empty()) {
+            return in_data_.GetMin();
+        }
+        if (in_data_.Empty()) {
+            return out_data_.GetMin();
+        }
+        return std::min(in_data_.GetMin(), out_data_.GetMin());
+    }
+    bool Empty() {
+        return in_data.Empty() && out_data_.Empty();
+    }
+private:
+    MinStack out_data_;
+    MinStack in_data_;
+
+}
+\end{lstlisting}
+
+\end{implementation}
+
+\subsection{Обобщение до произвольной ассоциативной операции}
+
+По аналогии с минимумом можно использовать любую ассоциативную операцию, будут небольшие различия в реализации (например, под такую реализацию можно легко подставить плюс в качестве ассоциативной операции, однако для минуса реализация будет немного отличаться)
 
 % \begin{definition}{Наименьшее общее кратное (НОК)}{}
 %   Всякое целое, кратное всем данным числам, называется их общим кратным. Наименьшее положительное общее кратное обозначается $[a, b, \ldots, l]$ или $\text{lcm}(a,b,\ldots,l)$.
@@ -1829,65 +1955,6 @@ struct list {
 %   \begin{lstlisting}[language=c++]
 % // second homework c++))
 % \end{lstlisting}
-% \end{implementation}
-
-% \textbf{Очередь на двух стеках:}
-
-% Задача. Дан стек в виде черного ящика. Надо соорудить очередь. Одного стека не хватит, воспользуемся двумя. Сделаем один стек на вход stack\_in и второй на выход stack\_out. В первый будем добавлять, а из второго --- извлекать. Если при извлечении stack\_out пуст, то перекидываем все элементы из stack\_in в stack\_out.
-
-% \textbf{Очередь с минимумом:}
-
-% Задача. Сделать очередь с поддержкой операции получения минимума в ней. Заведем очередь на двух стеках, поддерживающих минимум. Запрос минимума сводится к минимуму из минимумов в двух стеках.
-
-
-% \begin{algorithm}{Идея реализации}{}
-%   Сделаем стек на минимуме, но когда удаляем элемент, будем удалять тот, что
-%   лежит в обратном стеке. Если он пустой, по "перельём" все элементы из основного стека
-%   в обратный. В итоге они будут иметь обратный порядок и ударяя верхний элемент в
-%   обратном стеке мы фактически будем удалять нижний элемент в обычном стеке.
-% \end{algorithm}
-% \begin{implementation}{Минимум на очереди}{}
-%   \begin{lstlisting}[language=c++]
-% #include<stack>
-% struct MinQueue {
-% public:
-%     void Push(int element) {
-%         in_data.Push(element);
-%     }
-%     void Pop() {
-%         if (out_data_.Empty()) {
-%             while (!in_data_.Empty()) {
-%                 out_data_.Push(in_data_.Top());
-%             in_data_.Pop();
-%             }
-%         }
-%         if (out_data_.Empty()) {
-%             return;
-%         }
-%         out_data_.Pop();
-%     }
-%     int GetMin() {
-%         if (out_data_.Empty() && in_data_.Empty()) {
-%             return 0;
-%         }
-%         if (out_data.Empty()) {
-%             return in_data_.GetMin();
-%         }
-%         if (in_data_.Empty()) {
-%             return out_data_.GetMin();
-%         }
-%         return std::min(in_data_.GetMin(), out_data_.GetMin());
-%     }
-%     bool Empty() {
-%         return in_data.Empty() && out_data_.Empty();
-%     }
-% private:
-%     MinStack out_data_;
-%     MinStack in_data_;
-
-% }
-% \end{lstlisting}
-
 % \end{implementation}
 
 % \newpage
