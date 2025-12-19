@@ -1923,6 +1923,514 @@ O((n + m)\log n).
 \]
 
 \clearpage
+\section{Задачи RMQ, RSQ. Постановки online/offline, static/dynamic}
+\subsection{RMQ — Range Minimum Query}
+
+\begin{task}{Range Minimum Query (RMQ)}{}
+  \textbf{Дано:} массив из $n$ элементов $A[0], A[1], \ldots, A[n-1]$.
+
+  \textbf{Запрос:} найти минимальный элемент на отрезке $[l, r]$:
+  \[
+    \text{RMQ}(l, r) = \min_{i \in [l, r]} A[i] = \min(A[l], A[l+1], \ldots, A[r])
+  \]
+\end{task}
+
+\textbf{Примеры:}
+\begin{itemize}
+  \item Массив: $[3, 1, 4, 1, 5, 9, 2, 6]$
+  \item $\text{RMQ}(2, 5) = \min(4, 1, 5, 9) = 1$
+  \item $\text{RMQ}(0, 3) = \min(3, 1, 4, 1) = 1$
+\end{itemize}
+
+\textbf{Вариации:}
+\begin{itemize}
+  \item \textbf{Range Maximum Query (RMaxQ):} найти максимум на отрезке
+  \item \textbf{Range GCD Query:} найти НОД всех элементов на отрезке
+  \item \textbf{Range Product Query:} найти произведение элементов на отрезке
+\end{itemize}
+
+\textbf{Применение:}
+\begin{itemize}
+  \item Нахождение минимальной/максимальной цены за период
+  \item Поиск самого низкого/высокого уровня на графике
+  \item Задачи об интервалах и их пересечениях
+\end{itemize}
+
+\subsection{Классификация по типу запросов}
+
+\subsubsection{Static задачи}
+
+\begin{definition}{Static (статические) задачи}{}
+  В статических задачах массив \textbf{не изменяется} после построения структуры данных. Разрешены только \textbf{запросы чтения} (query), но не модификации.
+
+  \textbf{Операции:}
+  \begin{itemize}
+    \item \textbf{Построение:} предобработка массива один раз
+    \item \textbf{Query:} ответ на запрос о значении функции на отрезке
+    \item \textbf{Модификации:} не поддерживаются
+  \end{itemize}
+\end{definition}
+
+\textbf{Примеры static задач:}
+
+\begin{enumerate}
+  \item \textbf{Static RSQ:}
+        \begin{itemize}
+          \item Дан массив, нужно отвечать на запросы суммы на отрезке
+          \item Массив не изменяется
+          \item \textbf{Решение:} префиксные суммы за $O(n)$ построение, $O(1)$ запрос
+        \end{itemize}
+
+  \item \textbf{Static RMQ:}
+        \begin{itemize}
+          \item Дан массив, нужно отвечать на запросы минимума на отрезке
+          \item Массив не изменяется
+          \item \textbf{Решение:} Sparse Table за $O(n \log n)$ построение, $O(1)$ запрос
+        \end{itemize}
+\end{enumerate}
+
+\textbf{Структуры данных для static задач:}
+\begin{itemize}
+  \item \textbf{Префиксные суммы} --- только для RSQ
+  \item \textbf{Sparse Table} --- для идемпотентных операций (min, max, gcd)
+  \item \textbf{Segment Tree} --- универсальное решение
+\end{itemize}
+
+\subsubsection{Dynamic задачи}
+
+\begin{definition}{Dynamic (динамические) задачи}{}
+  В динамических задачах массив \textbf{может изменяться}. Поддерживаются как \textbf{запросы чтения} (query), так и \textbf{запросы модификации} (update).
+
+  \textbf{Операции:}
+  \begin{itemize}
+    \item \textbf{Query:} ответ на запрос о значении функции на отрезке
+    \item \textbf{Point Update:} изменение одного элемента массива
+    \item \textbf{Range Update:} изменение всех элементов на отрезке
+  \end{itemize}
+\end{definition}
+
+\textbf{Примеры dynamic задач:}
+
+\begin{enumerate}
+  \item \textbf{Dynamic RSQ с Point Update:}
+        \begin{itemize}
+          \item Дан массив
+          \item \textbf{Query:} найти сумму на отрезке $[l, r]$
+          \item \textbf{Update:} изменить элемент $A[i]$ на новое значение
+          \item \textbf{Решение:} Segment Tree или Fenwick Tree за $O(\log n)$ на операцию
+        \end{itemize}
+
+  \item \textbf{Dynamic RMQ с Point Update:}
+        \begin{itemize}
+          \item Дан массив
+          \item \textbf{Query:} найти минимум на отрезке $[l, r]$
+          \item \textbf{Update:} изменить элемент $A[i]$ на новое значение
+          \item \textbf{Решение:} Segment Tree за $O(\log n)$ на операцию
+        \end{itemize}
+
+  \item \textbf{Dynamic RSQ с Range Update:}
+        \begin{itemize}
+          \item Дан массив
+          \item \textbf{Query:} найти сумму на отрезке $[l, r]$
+          \item \textbf{Update:} добавить значение $\delta$ ко всем элементам на отрезке $[l, r]$
+          \item \textbf{Решение:} Segment Tree с ленивым распространением (lazy propagation)
+        \end{itemize}
+\end{enumerate}
+
+\textbf{Типы обновлений:}
+
+\begin{itemize}
+  \item \textbf{Point Update:} $A[i] := \text{value}$ или $A[i] := A[i] + \delta$
+  \item \textbf{Range Update:} $\forall j \in [l, r] : A[j] := A[j] + \delta$
+  \item \textbf{Range Assignment:} $\forall j \in [l, r] : A[j] := \text{value}$
+\end{itemize}
+
+\textbf{Структуры данных для dynamic задач:}
+\begin{itemize}
+  \item \textbf{Fenwick Tree (BIT)} --- только для сумм, простая реализация
+  \item \textbf{Segment Tree} --- универсальное решение для любых ассоциативных операций
+  \item \textbf{Segment Tree с Lazy Propagation} --- для групповых обновлений на отрезках
+  \item \textbf{SQRT-декомпозиция} --- простое решение за $O(\sqrt{n})$
+\end{itemize}
+
+\subsection{Классификация по порядку запросов}
+
+\subsubsection{Online задачи}
+
+\begin{definition}{Online (онлайн) задачи}{}
+  В онлайн-задачах запросы приходят \textbf{последовательно}, и на каждый запрос нужно ответить \textbf{немедленно}, до получения следующего запроса.
+
+  \textbf{Особенности:}
+  \begin{itemize}
+    \item Следующий запрос может зависеть от ответа на текущий
+    \item Нельзя переупорядочить запросы
+    \item Нужна быстрая структура данных
+  \end{itemize}
+\end{definition}
+
+\textbf{Пример онлайн-задачи:}
+
+\begin{verbatim}
+Даны:
+- Массив A[0..n-1]
+- m запросов, которые приходят по одному
+
+Для каждого запроса (l, r):
+1. Вычислить sum(l, r)
+2. Вывести ответ
+3. Получить следующий запрос (возможно зависящий от ответа)
+\end{verbatim}
+
+\textbf{Интерактивный пример:}
+\begin{verbatim}
+Запрос 1: sum(0, 3) → ответ: 15
+Запрос 2: sum(1, answer_1 % 5) → sum(1, 0) → ответ: 1
+Запрос 3: sum(answer_2, 7) → sum(1, 7) → ответ: 42
+\end{verbatim}
+
+\textbf{Требования к решению:}
+\begin{itemize}
+  \item Быстрая обработка каждого запроса
+  \item Типично: $O(\log n)$ на запрос
+  \item Можно использовать предподсчёт
+\end{itemize}
+
+\textbf{Подходящие структуры:}
+\begin{itemize}
+  \item Segment Tree
+  \item Sparse Table (для static)
+  \item Fenwick Tree
+  \item Префиксные суммы (для static RSQ)
+\end{itemize}
+
+\subsubsection{Offline задачи}
+
+\begin{definition}{Offline (оффлайн) задачи}{}
+  В оффлайн-задачах \textbf{все запросы известны заранее}. Можно:
+  \begin{itemize}
+    \item Переупорядочить запросы оптимальным образом
+    \item Использовать специальные алгоритмы
+    \item Обработать запросы пакетно
+  \end{itemize}
+\end{definition}
+
+\textbf{Пример оффлайн-задачи:}
+
+\begin{verbatim}
+Даны:
+- Массив A[0..n-1]
+- m запросов (l_1, r_1), (l_2, r_2), ..., (l_m, r_m)
+
+Задача:
+- Ответить на все запросы
+- Порядок ответов не важен (или можно восстановить)
+\end{verbatim}
+
+\textbf{Преимущества оффлайн-подхода:}
+
+\begin{enumerate}
+  \item \textbf{Оптимизация порядка:}
+        \begin{itemize}
+          \item Сортировка запросов по левой границе
+          \item Сортировка запросов по правой границе
+          \item Группировка похожих запросов
+        \end{itemize}
+
+  \item \textbf{Алгоритм Мо (Mo's Algorithm):}
+        \begin{itemize}
+          \item Разбиение на блоки размера $\sqrt{n}$
+          \item Специальная сортировка запросов
+          \item Время: $O((n + m) \sqrt{n})$
+        \end{itemize}
+
+  \item \textbf{Метод параллельного бинпоиска:}
+        \begin{itemize}
+          \item Обработка нескольких запросов одновременно
+          \item Использование монотонности
+        \end{itemize}
+\end{enumerate}
+
+\textbf{Пример: Алгоритм Мо для RSQ}
+
+\begin{verbatim}
+Идея:
+1. Разбить массив на блоки размера sqrt(n)
+2. Сортировать запросы:
+   - Сначала по номеру блока левой границы
+   - Затем по правой границе
+3. Поддерживать текущий отрезок [L, R] и сумму на нём
+4. Для каждого запроса (l, r):
+   - Двигать L и R, пока не получим [l, r]
+   - Обновлять сумму при каждом шаге
+\end{verbatim}
+
+\textbf{Когда использовать offline:}
+\begin{itemize}
+  \item Все запросы известны заранее
+  \item Сложная операция, которую нельзя эффективно делать online
+  \item Нужна асимптотически лучшая сложность
+\end{itemize}
+
+\clearpage
+\section{Разреженная таблица (Sparse Table)}
+
+\begin{definition}{Разреженная таблица}{}
+  Разреженная таблица или Sparse Table --- двумерная структура данных $ST[i][j]$, построенная на бинарной операции $F$, для которой выполнено следующее:
+  \[
+    ST[i][j] = F(A[i], A[i+1], \ldots, A[i + 2^j - 1]), \quad j \in [0 \ldots \log_2 N]
+  \]
+\end{definition}
+
+\textbf{Построение:}
+
+Простой метод построения таблицы заключён в следующем рекуррентном соотношении:
+\[
+  ST[i][j] = \begin{cases}
+    F(ST[i][j-1], ST[i + 2^{j-1}][j-1]), & \text{если } j > 0; \\
+    A[i],                                & \text{если } j = 0;
+  \end{cases}
+\]
+
+По факту нужно просто заполнить массив!
+
+\textbf{Примечание:} Для лучшей работы кешей лучше хранить матрицу у которой мало длинных строк (тогда для ответа на запрос будут браться значения из одного массива).
+
+\textbf{Ответ на запрос:}
+
+Заметим, что в этой таблице хранятся результаты функции $F$ на всех отрезках, длины которых равны степеням двойки. Выполним сначала предподсчет, суть которого в вычислении массива $\text{fl\_log}[j] = \lfloor \log_2 j \rfloor$. Теперь заметим, что для отрезка $[l, r]$ верно, что
+\[
+  F(A[l], A[l+1], \ldots, A[r]) = F(ST[l][j], ST[r - 2^j + 1][j]),
+\]
+где $j = \text{fl\_log}[r - l + 1]$.
+
+\textbf{Ресурсы:}
+
+\begin{itemize}
+  \item В таблице хранятся результаты функции $F$ на всех отрезках, длины которых равны степеням двойки. Однако для каждого $j \in [0 \ldots \log_2 N]$ таких отрезков не более $N$, откуда потребляемая память составит $O(N \log N)$.
+  \item Время построения. Заметим, что каждая ячейка пересчитывается за $O(1)$, откуда время построения $O(N \log N)$.
+  \item И последнее --- ответ на запрос. Заметим, что это всего лишь вычисление функции от двух значений, что работает за $O(1)$.
+\end{itemize}
+
+\textbf{Требования к F:}
+
+Операция $F$ должна быть:
+\begin{itemize}
+  \item Идемпотентна
+  \item Ассоциативна
+  \item Коммутативна
+\end{itemize}
+
+\begin{definition}{Идемпотентность}{}
+  Операция $f$ идемпотентна, если $\forall a : f(a, a) = a$.
+\end{definition}
+
+\textbf{Задача:}
+Есть массив из n элементов и q запросов типа findmin(l, r). Найти минимум на отрезке [l,
+r].
+\begin{algorithm}{Идея}{}
+  Мы можем выбрать такую степень двойки k, что отрезок [l, r] можно покрыть двумя
+  (возможно пересекающимися) отрезками длины 2k. Предподсчитаем ответ для всех
+  отрезков длины 2i $\forall$i $\in$ [0
+      , 1, … , log n]. Предпосчёт будет работать за O(nlog n). А на ответ
+  мы можем тратить O(1), предпосчитав логарифмы для всех чисел 1...n.
+\end{algorithm}
+\begin{implementation}{Решение задачи}{}
+  \begin{lstlisting}[language=c++]
+#include <vector>
+struct SparseTable {
+public:
+  SparseTable(const std::vector<int>& arr) {
+    size_ = arr.size();
+    logs_.resize(size_ + 1);
+    if (size_ >= 2) {
+    logs_[2] = 1;
+    size_t index = 2;
+    while ((index << 1) <= size_) {
+      index <<= 1;
+      logs_[index] = logs_[(index >> 1)] + 1;
+    }
+    for (index = 3; index <= size_; ++index) {
+      if (logs_[index] == 0) {
+        logs_[index] = logs_[index - 1];
+      }
+    }
+    } else {
+    return;
+    }
+    size_log_ = logs.back() + 1;
+    data_.resize(size_log_, std::vector<int> (size_));
+    for (size_t index = 0; index < size_; ++index) {
+      data_[0][index] = arr[index];
+    }
+    for (size_t log = 1; log < size_log_; ++log) {
+      for (size_t index = 0; index < size_ - (1 << log) + 1; ++index) {
+        data_[log][index] = std::min(data_[log - 1][index],
+        data_[log - 1][index + (1 << (log - 1))]);
+      }
+    }
+  }
+  int GetMin(int left_index, int right_index) { // [l, r]
+    size_t length = (right_index - left_index + 1);
+    size_t length_log = logs_[length];
+    return std::min(data_[length_log][left_index],
+                    data_[length_log][right_index - (1 << length_log) + 1]);
+  }
+private:
+  size_t size_;
+  size_t size_log_;
+  std::vector<int> logs_;
+  std::vector<std::vector<int>> data_;
+}
+\end{lstlisting}
+\end{implementation}
+
+\clearpage
+\section{Дерево отрезков (Segment Tree)}
+
+\begin{definition}{Дерево отрезков}{}
+  Дерево отрезков способно за $O(\log N)$ получать на подотрезке результат любой операции, которая:
+  \begin{itemize}
+    \item Ассоциативна ($\text{op}(\text{op}(a,b),c) = \text{op}(a,\text{op}(b,c))$)
+    \item Коммутативна ($\text{op}(a,b) = \text{op}(b,a)$)
+    \item Имеет нейтральный элемент ($0 : \text{op}(a,0) = a$)
+  \end{itemize}
+  Также возможны разные модификации.
+\end{definition}
+
+\textbf{Замечание:} Задачи RSQ/RMQ (Range sum query/range minimum query), как правило, решается с использованием этой структуры данных.
+
+\textbf{Структура:}
+
+Рассмотрим для суммы:
+\begin{itemize}
+  \item Корень содержит сумму всего массива.
+  \item Левый ребенок --- сумму первой половины элементов.
+  \item Правый ребенок --- сумму второй половины.
+  \item Далее аналогично бьем пополам детей.
+\end{itemize}
+
+\textbf{Построение:}
+
+Опишем нерекурсивное построение дерева на массиве длины $N$:
+\begin{enumerate}
+  \item Будем считать, что $\log_2 N \in \mathbb{N}$, иначе дозаполним до степени двойки нейтральными элементами.
+  \item Заведем массив длины $2N - 1$, последние $N$ элементов будут элементами исходного массива.
+  \item Первые $N-1$ элементов заполним следующим образом: $t[i] = F(t[2i+1], t[2i+2])$ (заполнение от элемента с номером $N-2$ и до 0 в цикле).
+\end{enumerate}
+
+\textbf{Ответ на запрос:}
+
+Наша цель --- получить результат операции на отрезке. Пусть мы находимся в узле, отвечающего за подотрезок $[l, r]$, а изначальный запрос был $[L, R]$:
+\begin{enumerate}
+  \item Если $[l, r] \cap [L, R] = \emptyset$, то вернем нейтральный элемент.
+  \item Если $[l, r] \subseteq [L, R]$, то вернем значение в узле.
+  \item Иначе вернем результат операции с детей.
+\end{enumerate}
+
+То есть исходный отрезок разбивается на дизъюнктное объединение подотрезков.
+
+\textbf{Время работы:}
+
+Заметим, что на каждом уровне раскрываться вниз могут не более двух узлов, так как только крайние могут порождать дочерние запросы. Следовательно, время работы $O(\log N)$.
+
+\textbf{Обновление по индексу:}
+
+Пусть необходимо обновить элемент с индексом $i$, тогда:
+\begin{enumerate}
+  \item Найдем в дереве лист, отвечающий за $i$-й элемент. Это $(N-1+i)$-й.
+  \item Индекс родителя: $\lfloor \frac{i-1}{2} \rfloor$.
+  \item Обновляем значение в родителе через результаты на деревьях.
+  \item Повтори, пока не обновил корень.
+\end{enumerate}
+
+Время: $O(\log N)$.
+
+\textbf{Задача}
+Дан массив длины n. И 2 типа запросов:
+\begin{enumerate}
+  \item Прибавить x на отрезке [l, r]
+  \item Узнать сумму элементов на отрезке [l, r]
+\end{enumerate}
+\begin{algorithm}{Реализация решения}{}
+  \begin{lstlisting}[language=c++]
+#include <vector>
+
+struct SegmentTree {
+public:
+
+  SegmentTree(cosnt std::vector<int> &arr) {
+    size_ = arr.size();
+    data_.resize((size_ << 2));
+    Build(1, 0, size_, arr);
+  }
+
+  void Build(size_t index, size_t left_index, size_t right_index, const std::vector<int>& arr) {
+    if (right_index - left_index == 1) {
+      data_[index].value = arr[left_index];
+      return;
+    }
+    size_t mid_index = left_index + (right_index - left_index) / 2;
+    Build((index << 1), left_index, mid_index, arr);
+    Build((index << 1) + 1, mid_index, right_index, arr);
+    data_[index].value = data_[(index << 1)].value + data_[(index << 1) + 1].value;
+  }
+
+  void Push(size_t index, size_t left_index, size_t right_index) {
+    data_[index].value += data_[index].push * (right_index - left_index);
+    if (right_index - left_index > 1) {
+      data_[(index << 1)].push += data_[index].push;
+      data_[(index << 1) + 1].push += data_[index].push;
+    }
+    data_[index].push = 0;
+  }
+
+  void Update(size_t Left_index, size_t Right_index, int delta) { // [l, r]
+    Update(1, 0, size_, Left_index, Right_index + 1, delta);
+  }
+
+  void Update(size_t index, size_t left_index, size_t right_index, size_t Left_index, size_t Right_index, int delta) {
+    Push(index, left_index, right_index);
+    if (Left_index <= left_index && right_index <= Right_index) {
+      data_[index].push += delta;
+      Push(index, left_index, right_index);
+      return;
+    }
+    if (Left_index >= right_index || left_index >= Right_index) {
+      return;
+    }
+    size_t mid_index = left_index + (right_index - left_index) / 2;
+    Update((index << 1), left_index, mid_index, Left_index, Right_index, delta);
+    Update((index << 1) + 1, mid_index, right_index, Left_index, Right_index, delta);
+    data_[index].value = data_[(index << 1)].value + data_[(index << 1) + 1].value;
+  }
+
+  int Get(size_t Left_index, size_t Right_index){ // [l, r]
+    return Get(1, 0, size_, Left_index, Right_index + 1);
+  }
+
+  int Get(size_t index, size_t left_inde, size_t right_index, size_t Left_index, size_t Right_index) {
+    Push(index, left_index, right_index);
+    if (Left_index <= left_index && right_index <= Right_index) {
+      return data_[index].value;
+    }
+    if (Left_index >= right_index || left_index >= Right_index) {
+      return 0;
+    }
+    size_t mid_index = left_index + (right_index - left_index) / 2;
+    return Get((index << 1), left_index, mid_index, Left_index, Right_index) +            Get((index << 1) + 1, mid_index, right_index, Left_index, Right_index);
+  }
+private:
+  struct Node {
+    int value = 0;
+    int push = 0;
+  }
+  std::vector<Node> data_;
+  size_t size_;
+}
+\end{lstlisting}
+\end{algorithm}
+
+\clearpage
 \section{Дерево Фенвика}
 
 \begin{definition}{Дерево Фенвика}{}
