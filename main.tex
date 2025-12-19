@@ -1810,6 +1810,118 @@ void LSPSort(std::vector<int>& vec) {
 \clearpage
 \section{Декартово дерево по неявному ключу. Задача о развороте подотрезка}
 
+\subsection{Декартово дерево по неявному ключу}
+
+\textbf{Определение.}
+Декартово дерево по неявному ключу — это декартово дерево, предназначенное для представления последовательности (массива), в котором:
+\begin{itemize}
+    \item бинарное поисковое свойство задаётся \emph{неявным ключом} — позицией элемента в последовательности;
+    \item неявный ключ не хранится явно в вершинах дерева;
+    \item приоритеты вершин задаются случайным образом и удовлетворяют heap-свойству.
+\end{itemize}
+
+Порядок элементов в последовательности соответствует \emph{in-order} обходу дерева.
+
+В каждой вершине дерева хранятся:
+\begin{itemize}
+    \item значение элемента;
+    \item приоритет;
+    \item размер поддерева.
+\end{itemize}
+
+\textbf{Неявный ключ.}
+Для каждой вершины $v$ её позиция в последовательности определяется структурой дерева и вычисляется по формуле:
+\[
+pos(v) = size(left(v)) + 1.
+\]
+Таким образом, позиция элемента определяется количеством элементов в левом поддереве и не требует явного хранения индекса.
+
+\subsection{Постановка задачи}
+
+Дан массив из $n$ элементов и $m$ запросов двух типов:
+\begin{enumerate}
+    \item \texttt{reverse(l, r)} — развернуть подотрезок массива с индексами $[l, r]$;
+    \item \texttt{get(i)} — вывести элемент, находящийся на позиции $i$.
+\end{enumerate}
+
+Требуется обработать все запросы эффективно по времени.
+
+\subsection{Идея решения}
+
+Для решения задачи используется декартово дерево по неявному ключу с поддержкой \emph{ленивого разворота}.
+
+Каждая вершина дерева дополнительно содержит булев флаг $rev$, означающий необходимость разворота соответствующего поддерева.
+
+Все операции над деревом выполняются с использованием стандартных операций \texttt{split} и \texttt{merge}.
+
+\subsection{Операция разворота подотрезка}
+
+Для выполнения запроса \texttt{reverse(l, r)} выполняются следующие шаги:
+\begin{enumerate}
+    \item Выполняется разбиение:
+    \[
+    split(root, l - 1) \rightarrow (A, B),
+    \]
+    где $A$ содержит элементы с позициями $[1, l-1]$, а $B$ — элементы $[l, n]$.
+    
+    \item Выполняется разбиение:
+    \[
+    split(B, r - l + 1) \rightarrow (C, D),
+    \]
+    где $C$ содержит элементы $[l, r]$, а $D$ — элементы $[r+1, n]$.
+    
+    \item В поддереве $C$ инвертируется флаг $rev$.
+    
+    \item Дерево собирается обратно:
+    \[
+    root = merge(A, merge(C, D)).
+    \]
+\end{enumerate}
+
+\subsection{Операция получения элемента}
+
+Для выполнения запроса \texttt{get(i)} выполняются следующие шаги:
+\begin{enumerate}
+    \item Выполняется разбиение:
+    \[
+    split(root, i - 1) \rightarrow (A, B).
+    \]
+    
+    \item Выполняется разбиение:
+    \[
+    split(B, 1) \rightarrow (X, C).
+    \]
+    
+    \item Вершина $X$ содержит элемент с позицией $i$.
+    
+    \item Дерево восстанавливается:
+    \[
+    root = merge(A, merge(X, C)).
+    \]
+\end{enumerate}
+
+\subsection{Ленивый разворот}
+
+Если у вершины установлен флаг $rev$, то:
+\begin{itemize}
+    \item её левое и правое поддеревья меняются местами;
+    \item флаг $rev$ передаётся детям;
+    \item флаг у текущей вершины сбрасывается.
+\end{itemize}
+
+Это позволяет выполнять разворот подотрезка за логарифмическое время без явного перестроения дерева.
+
+\subsection{Асимптотическая сложность}
+
+Операции \texttt{split} и \texttt{merge} выполняются за время $O(\log n)$.
+
+Каждый запрос (\texttt{reverse} и \texttt{get}) обрабатывается за $O(\log n)$.
+
+Суммарная сложность решения составляет:
+\[
+O((n + m)\log n).
+\]
+
 \clearpage
 \section{Дерево Фенвика}
 
@@ -2040,6 +2152,106 @@ $$E[X]=E[\displaystyle\sum_{i=1}^{n}X_i]=\displaystyle\sum_{i=1}^nE[X_i]=\frac{n
         }
       }
       return answer;
+    }
+  \end{lstlisting}
+\end{implementation}
+
+\subsection{Задача об оптимальном перемножении матриц}
+
+\begin{task}{Задача об оптимальном перемножении матриц}{}
+  Дана последовательность n матриц. Нужно расставить скобки так, чтобы при перемножении использовалось минимальное количество операций.
+
+  Матрицы представлены в виде пары {a, b} - размеров матрицы.
+\end{task}
+
+Пусть $p=[a_1, b_1, b_2, ..., b_n]$. То есть все размерности матрицы. Тогда $A_1.size() = \{p[0], p[1]\}, A_2.size() = \{p[1], p[2]\}, ...$
+
+\textbf{Идея:} пусть dp[i][j] - минимальная стоимость умножения матриц $\{A_i, A_{i+1}, ..., A_j\}$. Тогда пересчёт динамики будет следующим: $dp[i][j] = \displaystyle{min_{i\le k < j}} (dp[i][k] + dp[k + 1][j] + p[i-1] * p[k] * p[j])$
+
+\begin{implementation}{Задача об оптимальном перемножении матриц за $O(n^3)$}{}
+  \begin{lstlisting}[language=c++]
+    int answer(const std::vector<std::pair<int,int>>& vec) {
+      std::vector<int> p(vec.size() + 1);
+      p[0] = vec[0].first;
+      for (int index = 0; index < vec.size(); ++index) {
+        p[index + 1] = vec[index].second;
+      }
+      std::vector<std::vector<int>> dp(vec.size(), std::vector<int> (vec.size(), INT_MAX));
+      for (int index = 0; index < vec.size(); ++index) {
+        dp[index][index] = 0;
+      }
+      for (int len = 2; len <= vec.size(); ++len) {
+        for (int index1 = 0; index1 < vec.size() + 1 - len; ++index1) {
+          for (int index2 = index1; index2 < index1 + len - 1; ++index2) {
+            dp[index1][index1 + len - 1] = std::min(dp[index1][index1 - len], dp[index1][index2] + dp[index2 + 1][index1 + len - 1] + p[index1] * p[index2 + 1] * p[index1 + len]);
+          }
+        }
+      }
+    }
+  \end{lstlisting}
+\end{implementation}
+
+\subsection{Подсчёт k-ого члена однородной линейной рекурренты n-го порядка за $O(n^3 logk)$}
+
+\begin{task}{Подсчёт k-ого члена однородной линейной рекурренты n-го порядка за $O(n^3 logk)$}{}
+  Пусть дано рекуррентное соотношение $a_k=c_1a_{k-1}+c_2a{k-2}+...+c_ka_{k-n}$. Тогда это можно представить в виде $a_k=Aa_k-1$, где A постоянная. Значит $a_k=A^{k-1}a_1$. Матрица A - матрица размером n x n. Тогда с помощью быстрого возведения в степень матриц можно решить задачу за $O(n^3logk)$.
+\end{task}
+
+\subsection{Задача о рюкзаке за $O(n2^n)$}
+
+\textbf{Идея:} переберём маски всех подмножеств за $O(2^n)$, честно пройдёмся по каждой из них за $O(n)$, посчитаем общее capacity и стоимость. Если подходит по ограничениям, обновим ответ. Работает за $O(n2^n)$.
+
+\begin{implementation}{Рюкзак за $O(n2^n)$}{}
+  \begin{lstlisting}[language=c++]
+    int Solve(const std::vector<int>& weight, const std::vector<int>& cost, int capacity) {
+      int answer = 0;
+      for (int mask = 1; mask < (1 << cos.size()); ++mask) {
+        int all_cap = 0;
+        int ans = 0;
+        for (int index = 0; index < weight.size(); ++index) {
+          if ((mask >> index) & 1) {
+            all_cap += weight[index];
+            ans += cost[index];
+          }
+        }
+        if (all_cap <= capacity) {
+          answer = std::max(answer, ans);
+        }
+      }
+      return answer;
+    }
+  \end{lstlisting}
+\end{implementation}
+
+\subsection{Задача поиска Гамильтонова пути минимального веса}
+
+\textbf{Идея:} заведём двумерную динамику, где dp[i][j] - ответ на маске i с последним элементом j. Тогда пересчёт простой: $dp[i][j]=min_{k=0...n-1}dp[i\ xor\ 2^j][k]+cost[k][j]$
+
+\begin{implementation}{Гамильтонов путь за $O(2^nn^2)$}{}
+  \begin{lstlisting}[language=c++]
+    int Solve(const std::vector<std::vector<int>>& cost) {
+      std::vector<std::vector<int>> dp((1 << cost.size()), std::vector<int> (cost.size(), INT_MAX));
+      for (int index = 0; index < cost.size(); ++index) {
+        dp[(1 << index)][index] = 0;
+      }
+      for (int mask = 1; mask < (1 << cost.size()); ++mask) {
+        for (int index1 = 0; index1 < cost.size(); ++index1) {
+          if (!((mask >> index1) & 1)) {
+            continue;
+          }
+          for (int index2 = 0; index2 < cost.size(); ++index2) {
+            if (index2 == index1 || !((mask >> index2) & 1)) {
+              continue;
+            }
+            dp[mask][index1] = std::min(dp[mask][index1], dp[(mask ^ (1 << index1))][index2] + cost[index1][index2]);
+          }
+        }
+      }
+      int min_ans = INT_MAX;
+      for (auto &elem: dp[(1 << cost.size()) - 1]) {
+        min_ans = std::min(min_ans, elem);
+      }
+      return min_ans;
     }
   \end{lstlisting}
 \end{implementation}
