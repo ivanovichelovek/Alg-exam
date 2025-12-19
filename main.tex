@@ -73,10 +73,8 @@
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\small Билеты к экзамену по алгоритмам}
-\fancyhead[R]{\small Если найдете ошибки, пишите}
+\fancyhead[R]{\small \hyperref[contents]{Назад к содержанию}}
 \fancyfoot[C]{\thepage}
-\fancyfoot[L]{\small \href{https://t.me/geomemia}{Телеграмм канал автора}}
-\fancyfoot[R]{\small \href{https://t.me/seniorprocrastinator}{Автор}}
 
 % Определение окружений для теорем и определений
 \tcbuselibrary{theorems}
@@ -103,10 +101,14 @@
 {colback=orange!5,colframe=orange!75!black,fonttitle=\bfseries}{impl}
 
 % Титульная страница
-\title{\textbf{\HugeКоллоквиум}\\[0.5em]
+\title{\textbf{\HugeЭкзамен}\\[0.5em]
 \Large«Алгоритмы и структуры данных»\\[1em]
 \large Если найдете опечатки или неправильность пишите}
-\author{\href{https://t.me/seniorprocrastinator}{Автор}}
+\author{
+  \href{https://t.me/ivanovichelovek}{Герунов Иван} \\[-0.5em]
+  \and
+  \href{https://t.me/seniorprocrastinator}{Языков Антон}
+}
 
 \begin{document}
 
@@ -114,6 +116,7 @@
 
 \newpage
 \tableofcontents
+\label{contents}
 \newpage
 
 \section{Понятие временной и пространственной (по памяти) сложности алгоритма. Определение
